@@ -12,6 +12,7 @@
       crossorigin="anonymous"
     >
     <link href="assets/css/styles.css" rel="stylesheet">
+    <script src="assets/js/explore.js" defer></script>
   </head>
   <body>
     <header class="axon-header">
@@ -29,72 +30,133 @@
         <p>Discover models and datasets for your next project.</p>
       </div>
 
-      <ul class="axon-resource-list">
-        <li class="axon-resource-row">
-          <div class="axon-resource-heading">
-            <div class="d-flex align-items-center flex-wrap gap-2">
-              <span class="axon-resource-type">Model</span>
-              <h2>Sentiment Mini</h2>
+      <form id="resource-filters" class="axon-search" method="get">
+        <div>
+          <label for="search" class="form-label">Search resources</label>
+          <input id="search" name="q" type="search" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Apply filters</button>
+        <button type="reset" class="btn btn-outline-secondary">Reset</button>
+      </form>
+
+      <div class="axon-explore-layout">
+        <aside aria-label="Resource filters">
+          <details id="filter-panel" open>
+            <summary>Filters <span id="filter-count">(0)</span></summary>
+            <div class="axon-filter-fields">
+              <label for="type">Type</label>
+              <select id="type" name="type" form="resource-filters" class="form-select">
+                <option value="">All types</option>
+                <option value="model">Models</option>
+                <option value="dataset">Datasets</option>
+              </select>
+              <label for="task">Task</label>
+              <select id="task" name="task" form="resource-filters" class="form-select">
+                <option value="">All tasks</option>
+                <option value="text-classification">Text classification</option>
+                <option value="image-classification">Image classification</option>
+                <option value="translation">Translation</option>
+              </select>
+              <label for="license">License</label>
+              <select id="license" name="license" form="resource-filters" class="form-select">
+                <option value="">All licenses</option>
+                <option value="apache-2.0">Apache-2.0</option>
+                <option value="mit">MIT</option>
+                <option value="cc-by-4.0">CC-BY-4.0</option>
+              </select>
+              <label for="size">Size</label>
+              <select id="size" name="size" form="resource-filters" class="form-select">
+                <option value="">All sizes</option>
+                <option value="small">Under 100 MiB</option>
+                <option value="medium">100 MiB to &lt;1 GiB</option>
+                <option value="large">1 GiB and above</option>
+              </select>
+              <label for="framework">Framework</label>
+              <select id="framework" name="framework" form="resource-filters" class="form-select">
+                <option value="">All frameworks</option>
+                <option value="pytorch">PyTorch</option>
+                <option value="tensorflow">TensorFlow</option>
+                <option value="scikit-learn">scikit-learn</option>
+                <option value="none">Not applicable</option>
+              </select>
             </div>
-            <span class="axon-resource-stars">12 stars</span>
-          </div>
-          <p>Compact sentiment classification example for short English reviews.</p>
-          <dl class="axon-resource-metadata">
-            <div><dt>Task</dt><dd>Text classification</dd></div>
-            <div><dt>Framework</dt><dd>PyTorch</dd></div>
-            <div><dt>License</dt><dd>Apache-2.0</dd></div>
-            <div><dt>Size</dt><dd>48 MiB</dd></div>
-          </dl>
-        </li>
-        <li class="axon-resource-row">
-          <div class="axon-resource-heading">
-            <div class="d-flex align-items-center flex-wrap gap-2">
-              <span class="axon-resource-type">Dataset</span>
-              <h2>Reviews Sample</h2>
-            </div>
-            <span class="axon-resource-stars">8 stars</span>
-          </div>
-          <p>A small collection of labelled reviews for sentiment classification practice.</p>
-          <dl class="axon-resource-metadata">
-            <div><dt>Task</dt><dd>Text classification</dd></div>
-            <div><dt>Framework</dt><dd>Not applicable</dd></div>
-            <div><dt>License</dt><dd>CC-BY-4.0</dd></div>
-            <div><dt>Size</dt><dd>12 MiB</dd></div>
-          </dl>
-        </li>
-        <li class="axon-resource-row">
-          <div class="axon-resource-heading">
-            <div class="d-flex align-items-center flex-wrap gap-2">
-              <span class="axon-resource-type">Model</span>
-              <h2>Image Baseline</h2>
-            </div>
-            <span class="axon-resource-stars">5 stars</span>
-          </div>
-          <p>An image classification baseline for comparing simple training configurations.</p>
-          <dl class="axon-resource-metadata">
-            <div><dt>Task</dt><dd>Image classification</dd></div>
-            <div><dt>Framework</dt><dd>TensorFlow</dd></div>
-            <div><dt>License</dt><dd>MIT</dd></div>
-            <div><dt>Size</dt><dd>180 MiB</dd></div>
-          </dl>
-        </li>
-        <li class="axon-resource-row">
-          <div class="axon-resource-heading">
-            <div class="d-flex align-items-center flex-wrap gap-2">
-              <span class="axon-resource-type">Dataset</span>
-              <h2>Multilingual Product Reviews for Text Classification</h2>
-            </div>
-            <span class="axon-resource-stars">0 stars</span>
-          </div>
-          <p>Product review examples in several languages for exploring classification tasks.</p>
-          <dl class="axon-resource-metadata">
-            <div><dt>Task</dt><dd>Text classification</dd></div>
-            <div><dt>Framework</dt><dd>Not applicable</dd></div>
-            <div><dt>License</dt><dd>CC-BY-4.0</dd></div>
-            <div><dt>Size</dt><dd>32 MiB</dd></div>
-          </dl>
-        </li>
-      </ul>
+          </details>
+        </aside>
+        <div class="axon-results">
+          <p id="result-count" role="status">4 resources</p>
+          <p id="empty-results" hidden>No resources match your filters. Try another search or Reset.</p>
+          <ul class="axon-resource-list">
+            <li class="axon-resource-row" data-type="model" data-task="text-classification"
+                data-license="apache-2.0" data-framework="pytorch" data-size-bytes="50331648">
+              <div class="axon-resource-heading">
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                  <span class="axon-resource-type">Model</span>
+                  <h2>Sentiment Mini</h2>
+                </div>
+                <span class="axon-resource-stars">12 stars</span>
+              </div>
+              <p>Compact sentiment classification example for short English reviews.</p>
+              <dl class="axon-resource-metadata">
+                <div><dt>Task</dt><dd>Text classification</dd></div>
+                <div><dt>Framework</dt><dd>PyTorch</dd></div>
+                <div><dt>License</dt><dd>Apache-2.0</dd></div>
+                <div><dt>Size</dt><dd>48 MiB</dd></div>
+              </dl>
+            </li>
+            <li class="axon-resource-row" data-type="dataset" data-task="text-classification"
+                data-license="cc-by-4.0" data-framework="none" data-size-bytes="12582912">
+              <div class="axon-resource-heading">
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                  <span class="axon-resource-type">Dataset</span>
+                  <h2>Reviews Sample</h2>
+                </div>
+                <span class="axon-resource-stars">8 stars</span>
+              </div>
+              <p>A small collection of labelled reviews for sentiment classification practice.</p>
+              <dl class="axon-resource-metadata">
+                <div><dt>Task</dt><dd>Text classification</dd></div>
+                <div><dt>Framework</dt><dd>Not applicable</dd></div>
+                <div><dt>License</dt><dd>CC-BY-4.0</dd></div>
+                <div><dt>Size</dt><dd>12 MiB</dd></div>
+              </dl>
+            </li>
+            <li class="axon-resource-row" data-type="model" data-task="image-classification"
+                data-license="mit" data-framework="tensorflow" data-size-bytes="188743680">
+              <div class="axon-resource-heading">
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                  <span class="axon-resource-type">Model</span>
+                  <h2>Image Baseline</h2>
+                </div>
+                <span class="axon-resource-stars">5 stars</span>
+              </div>
+              <p>An image classification baseline for comparing simple training configurations.</p>
+              <dl class="axon-resource-metadata">
+                <div><dt>Task</dt><dd>Image classification</dd></div>
+                <div><dt>Framework</dt><dd>TensorFlow</dd></div>
+                <div><dt>License</dt><dd>MIT</dd></div>
+                <div><dt>Size</dt><dd>180 MiB</dd></div>
+              </dl>
+            </li>
+            <li class="axon-resource-row" data-type="dataset" data-task="text-classification"
+                data-license="cc-by-4.0" data-framework="none" data-size-bytes="33554432">
+              <div class="axon-resource-heading">
+                <div class="d-flex align-items-center flex-wrap gap-2">
+                  <span class="axon-resource-type">Dataset</span>
+                  <h2>Multilingual Product Reviews for Text Classification</h2>
+                </div>
+                <span class="axon-resource-stars">0 stars</span>
+              </div>
+              <p>Product review examples in several languages for exploring classification tasks.</p>
+              <dl class="axon-resource-metadata">
+                <div><dt>Task</dt><dd>Text classification</dd></div>
+                <div><dt>Framework</dt><dd>Not applicable</dd></div>
+                <div><dt>License</dt><dd>CC-BY-4.0</dd></div>
+                <div><dt>Size</dt><dd>32 MiB</dd></div>
+              </dl>
+            </li>
+          </ul>
+        </div>
+      </div>
     </main>
   </body>
 </html>
