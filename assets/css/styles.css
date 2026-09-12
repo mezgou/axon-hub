@@ -208,6 +208,56 @@ a:focus-visible {
   margin: 0;
 }
 
+.axon-detail-layout {
+  display: grid;
+  gap: 32px;
+  padding-block: 24px;
+}
+
+.axon-detail-layout h2 {
+  margin-bottom: 12px;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.axon-detail-content {
+  min-width: 0;
+}
+
+.axon-detail-content section + section {
+  margin-top: 32px;
+}
+
+.axon-code {
+  padding: 16px;
+  background-color: #eef1f5;
+  border: 1px solid #d7dfe9;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+}
+
+.axon-code:focus-visible {
+  outline: 3px solid #1e5bbd;
+  outline-offset: 4px;
+}
+
+@media (min-width: 992px) {
+  .axon-detail-layout {
+    grid-template-columns: minmax(0, 1fr) 280px;
+  }
+
+  .axon-detail-metadata {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .axon-detail-content {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
 .axon-profile-identity {
   padding-block: 24px;
   overflow-wrap: anywhere;
