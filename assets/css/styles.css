@@ -161,7 +161,8 @@ a:focus-visible {
   margin-bottom: 8px;
 }
 
-.axon-resource-heading h2 {
+.axon-resource-heading h2,
+.axon-resource-heading h3 {
   margin: 0;
   font-size: 1.125rem;
   font-weight: 600;
@@ -205,6 +206,21 @@ a:focus-visible {
 
 .axon-resource-metadata dd {
   margin: 0;
+}
+
+.axon-profile-identity {
+  padding-block: 24px;
+  overflow-wrap: anywhere;
+}
+
+.axon-profile-section {
+  margin-bottom: 32px;
+}
+
+.axon-profile-section > h2 {
+  margin-bottom: 8px;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 @media (max-width: 767.98px) {

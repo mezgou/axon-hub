@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Preview your AxonHub resources and subscriptions.">
+    <title>Profile preview · AxonHub</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    >
+    <link href="assets/css/styles.css" rel="stylesheet">
+  </head>
+  <body>
+    <header class="axon-header">
+      <div class="container-fluid axon-container d-flex align-items-center flex-wrap gap-4">
+        <a class="axon-brand" href="index.html">AxonHub</a>
+        <nav class="d-flex align-items-center flex-wrap gap-4 flex-grow-1" aria-label="Main navigation">
+          <a class="axon-nav-link" href="index.html">Explore</a>
+          <a class="axon-nav-link" href="profile.html" aria-current="page">Profile preview</a>
+          <a class="axon-nav-link ms-auto" href="login.html">Log in</a>
+          <a class="axon-nav-link" href="register.html">Sign up</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container-fluid axon-container">
+      <div class="axon-page-header">
+        <h1>Profile preview</h1>
+        <p>Sample profile only. You are not signed in; no account data is loaded.</p>
+      </div>
+      <div class="axon-profile-identity">
+        <p class="fw-semibold mb-1">Alex Morgan</p>
+        <p class="mb-0">alex@example.test</p>
+      </div>
+
+      <section class="axon-profile-section" aria-labelledby="your-resources-heading">
+        <h2 id="your-resources-heading">Your resources</h2>
+        <p>2 demo resources</p>
+        <ul class="axon-resource-list">
+          <li class="axon-resource-row">
+            <div class="axon-resource-heading">
+              <div class="d-flex align-items-center flex-wrap gap-2">
+                <span class="axon-resource-type">Model</span>
+                <h3>Sentiment Mini</h3>
+              </div>
+              <span class="axon-resource-stars">12 stars</span>
+            </div>
+            <p>Compact sentiment classification example for short English reviews.</p>
+            <dl class="axon-resource-metadata">
+              <div><dt>Task</dt><dd>Text classification</dd></div>
+              <div><dt>Framework</dt><dd>PyTorch</dd></div>
+              <div><dt>License</dt><dd>Apache-2.0</dd></div>
+              <div><dt>Size</dt><dd>48 MiB</dd></div>
+            </dl>
+          </li>
+          <li class="axon-resource-row">
+            <div class="axon-resource-heading">
+              <div class="d-flex align-items-center flex-wrap gap-2">
+                <span class="axon-resource-type">Dataset</span>
+                <h3>Multilingual Product Reviews for Text Classification</h3>
+              </div>
+              <span class="axon-resource-stars">0 stars</span>
+            </div>
+            <p>Product review examples in several languages for exploring classification tasks.</p>
+            <dl class="axon-resource-metadata">
+              <div><dt>Task</dt><dd>Text classification</dd></div>
+              <div><dt>Framework</dt><dd>Not applicable</dd></div>
+              <div><dt>License</dt><dd>CC-BY-4.0</dd></div>
+              <div><dt>Size</dt><dd>32 MiB</dd></div>
+            </dl>
+          </li>
+        </ul>
+      </section>
+
+      <section class="axon-profile-section" aria-labelledby="subscriptions-heading">
+        <h2 id="subscriptions-heading">Subscriptions</h2>
+        <p>No subscriptions yet.</p>
+        <p>Resources you subscribe to will appear here.</p>
+        <a href="index.html">Explore resources</a>
+      </section>
+    </main>
+  </body>
+</html>
