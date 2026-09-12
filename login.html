@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Log in · AxonHub</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    >
+    <link href="assets/css/styles.css" rel="stylesheet">
+    <script src="assets/js/forms.js" defer></script>
+  </head>
+  <body>
+    <header class="axon-header">
+      <div class="container-fluid axon-container d-flex align-items-center flex-wrap gap-4">
+        <a class="axon-brand" href="index.html">AxonHub</a>
+        <nav class="d-flex align-items-center flex-wrap gap-4 flex-grow-1" aria-label="Main navigation">
+          <a class="axon-nav-link" href="index.html">Explore</a>
+          <a class="axon-nav-link ms-auto" href="login.html" aria-current="page">Log in</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container-fluid axon-container">
+      <div class="axon-auth">
+        <div class="axon-page-header">
+          <h1>Welcome back</h1>
+          <p>Preview only. Try the form with sample details; no account sign-in takes place.</p>
+        </div>
+        <form id="login-form" class="axon-auth-form" method="post" novalidate>
+          <div>
+            <label for="email" class="form-label">Email</label>
+            <input id="email" name="email" type="email" class="form-control"
+                   autocomplete="email" required aria-describedby="email-error">
+            <p id="email-error" class="axon-field-error" hidden></p>
+          </div>
+          <div>
+            <label for="password" class="form-label">Password</label>
+            <input id="password" name="password" type="password" class="form-control"
+                   autocomplete="current-password" required minlength="8" aria-describedby="password-hint password-error">
+            <p id="password-hint" class="form-text mb-0">Use at least 8 characters.</p>
+            <p id="password-error" class="axon-field-error" hidden></p>
+          </div>
+          <button type="submit" class="btn btn-primary" disabled>Log in (preview)</button>
+          <noscript>Enable JavaScript to try this form preview.</noscript>
+          <p id="form-status" role="status" class="mb-0"></p>
+        </form>
+      </div>
+    </main>
+  </body>
+</html>

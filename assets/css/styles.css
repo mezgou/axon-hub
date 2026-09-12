@@ -29,10 +29,14 @@ body {
 .axon-nav-link {
   display: block;
   padding-block: 20px 18px;
-  border-bottom: 2px solid #1e5bbd;
+  border-bottom: 2px solid transparent;
   color: #1e5bbd;
   font-weight: 600;
   text-decoration: none;
+}
+
+.axon-nav-link[aria-current="page"] {
+  border-bottom-color: #1e5bbd;
 }
 
 .axon-brand:hover,
@@ -78,13 +82,37 @@ a:focus-visible {
 
 .axon-search .btn,
 .axon-search .form-control,
-.axon-filter-fields .form-select {
+.axon-filter-fields .form-select,
+.axon-auth-form .form-control,
+.axon-auth-form .btn {
   min-height: 44px;
   border-color: #758397;
 }
 
-.axon-search .btn-primary {
+.axon-search .btn-primary,
+.axon-auth-form .btn-primary {
   background-color: #1e5bbd;
+}
+
+.axon-auth {
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.axon-auth-form {
+  display: grid;
+  gap: 20px;
+  padding-block: 24px;
+}
+
+.axon-field-error {
+  margin: 4px 0 0;
+  color: #b42318;
+  font-size: 0.875rem;
+}
+
+.axon-auth-form [aria-invalid="true"] {
+  border-color: #b42318;
 }
 
 .axon-explore-layout {
