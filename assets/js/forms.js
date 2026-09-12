@@ -1,6 +1,11 @@
-const form = document.querySelector('#login-form');
+const form = document.querySelector('.axon-auth-form');
 const fields = [...form.querySelectorAll('input')];
 const status = document.querySelector('#form-status');
+const requiredMessages = {
+  displayName: 'Enter your display name.',
+  email: 'Enter your email address.',
+  password: 'Enter your password.',
+};
 
 function showError(field, message) {
   const error = document.querySelector(`#${field.id}-error`);
@@ -16,13 +21,16 @@ form.addEventListener('submit', event => {
   let firstInvalid = null;
 
   for (const field of fields) {
+    if (field.name === 'displayName') field.value = field.value.trim();
     let message = '';
     if (field.validity.valueMissing) {
-      message = field.type === 'email' ? 'Enter your email address.' : 'Enter your password.';
+      message = requiredMessages[field.name];
     } else if (field.validity.typeMismatch) {
       message = 'Enter a valid email address, such as alex@example.test.';
-    } else if (field.validity.tooShort) {
+    } else if (field.validity.tooShort || (field.minLength > 0 && field.value.length < field.minLength)) {
       message = `Use at least ${field.minLength} characters.`;
+    } else if (field.validity.tooLong || (field.maxLength > 0 && field.value.length > field.maxLength)) {
+      message = `Use no more than ${field.maxLength} characters.`;
     }
     showError(field, message);
     if (message && !firstInvalid) firstInvalid = field;
@@ -34,7 +42,9 @@ form.addEventListener('submit', event => {
   }
 
   form.elements.password.value = '';
-  status.textContent = 'Preview complete. The form is valid; you are not signed in. Your details were not sent or saved by AxonHub.';
+  status.textContent = form.id === 'register-form'
+    ? 'Preview complete. The form is valid; no account was created. Your details were not sent or saved by AxonHub.'
+    : 'Preview complete. The form is valid; you are not signed in. Your details were not sent or saved by AxonHub.';
 });
 
 for (const field of fields) {
