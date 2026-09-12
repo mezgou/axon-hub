@@ -64,6 +64,73 @@ a:focus-visible {
   color: #526174;
 }
 
+.axon-resource-list {
+  margin: 0 0 32px;
+  padding: 0;
+  list-style: none;
+}
+
+.axon-resource-row {
+  padding-block: 24px;
+  border-bottom: 1px solid #d7dfe9;
+  overflow-wrap: anywhere;
+}
+
+.axon-resource-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin-bottom: 8px;
+}
+
+.axon-resource-heading h2 {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.axon-resource-type {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background-color: #eef1f5;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.axon-resource-stars {
+  white-space: nowrap;
+}
+
+.axon-resource-row p {
+  margin: 0 0 12px;
+}
+
+.axon-resource-stars,
+.axon-resource-metadata {
+  color: #526174;
+  font-size: 0.875rem;
+}
+
+.axon-resource-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0;
+}
+
+.axon-resource-metadata div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.axon-resource-metadata dd {
+  margin: 0;
+}
+
 @media (max-width: 767.98px) {
   .axon-container {
     padding-inline: 16px;
