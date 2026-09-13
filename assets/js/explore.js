@@ -20,7 +20,7 @@ function applyFilters() {
   let visibleCount = 0;
 
   for (const row of rows) {
-    const text = `${row.querySelector('h2').textContent} ${row.querySelector('p').textContent}`;
+    const text = `${row.querySelector('h3').textContent} ${row.querySelector('p').textContent}`;
     const matchesFields = filterNames.every(name => !values[name] || (name === 'size'
       ? matchesSize(Number(row.dataset.sizeBytes), values.size)
       : row.dataset[name] === values[name]));

@@ -6,7 +6,6 @@ const previewStatus = document.querySelector('#preview-status');
 function resetPreview() {
   for (const button of buttons) {
     button.setAttribute('aria-pressed', 'false');
-    button.classList.remove('bg-primary-subtle', 'text-dark');
   }
   starCount.textContent = baseCount;
   previewStatus.textContent = '';
@@ -16,8 +15,6 @@ for (const button of buttons) {
   button.addEventListener('click', () => {
     const isPressed = button.getAttribute('aria-pressed') !== 'true';
     button.setAttribute('aria-pressed', String(isPressed));
-    button.classList.toggle('bg-primary-subtle', isPressed);
-    button.classList.toggle('text-dark', isPressed);
 
     if (button.dataset.previewToggle === 'star') {
       starCount.textContent = baseCount + Number(isPressed);
