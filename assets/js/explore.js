@@ -1,5 +1,12 @@
+import { getResources } from './services/resources.js';
+
 const form = document.querySelector('#resource-filters');
-const rows = [...document.querySelectorAll('.axon-resource-row')];
+const list = document.querySelector('#resource-list');
+const template = document.querySelector('#resource-template');
+const loadError = document.querySelector('#load-error');
+const retry = document.querySelector('#retry-load');
+let resources = [];
+let loadState = 'loading';
 const filterNames = ['type', 'task', 'license', 'size', 'framework'];
 const resultCount = document.querySelector('#result-count');
 const filterCount = document.querySelector('#filter-count');
@@ -14,23 +21,82 @@ function matchesSize(bytes, size) {
   return true;
 }
 
+function matchesResource(resource, values) {
+  const query = values.q.trim().toLowerCase();
+  const text = `${resource.name} ${resource.summary}`.toLowerCase();
+  return text.includes(query) && filterNames.every(name => !values[name] || (name === 'size'
+    ? matchesSize(resource.sizeBytes, values.size) : resource[name] === values[name]));
+}
+
+function createResourceRow(resource) {
+  const row = template.content.firstElementChild.cloneNode(true);
+  const isDataset = resource.type === 'dataset';
+  row.querySelector('img').src = `assets/icons/${isDataset ? 'database' : 'box'}.svg`;
+  row.querySelector('.axon-resource-tile').classList.toggle('axon-resource-tile--dataset', isDataset);
+  const badge = row.querySelector('.axon-resource-type');
+  badge.textContent = isDataset ? 'Dataset' : 'Model';
+  badge.classList.toggle('axon-resource-type--dataset', isDataset);
+  const heading = row.querySelector('h3');
+  // Only these two resources have matching previews while details are static.
+  const previewPage = resource.id === 1 ? 'model.html' : resource.id === 4 ? 'dataset.html' : null;
+  if (previewPage) {
+    const link = document.createElement('a');
+    link.href = previewPage;
+    link.textContent = resource.name;
+    heading.append(link);
+  } else {
+    heading.textContent = resource.name;
+  }
+  row.querySelector('p').textContent = resource.summary;
+  for (const name of ['task', 'framework', 'license']) {
+    const option = [...form.elements.namedItem(name).options].find(item => item.value === resource[name]);
+    row.querySelector(`[data-field="${name}"]`).textContent = option?.textContent || resource[name];
+  }
+  const bytes = resource.sizeBytes;
+  row.querySelector('[data-field="size"]').textContent = bytes >= 1024 ** 3
+    ? `${Number((bytes / 1024 ** 3).toFixed(2))} GiB`
+    : `${Number((bytes / 1024 ** 2).toFixed(2))} MiB`;
+  return row;
+}
+
 function applyFilters() {
   const values = Object.fromEntries(new FormData(form));
-  const query = values.q.trim().toLowerCase();
-  let visibleCount = 0;
-
-  for (const row of rows) {
-    const text = `${row.querySelector('h3').textContent} ${row.querySelector('p').textContent}`;
-    const matchesFields = filterNames.every(name => !values[name] || (name === 'size'
-      ? matchesSize(Number(row.dataset.sizeBytes), values.size)
-      : row.dataset[name] === values[name]));
-    row.hidden = !(text.toLowerCase().includes(query) && matchesFields);
-    if (!row.hidden) visibleCount += 1;
-  }
-
-  resultCount.textContent = `${visibleCount} ${visibleCount === 1 ? 'resource' : 'resources'}`;
-  emptyResults.hidden = visibleCount !== 0;
   filterCount.textContent = `(${filterNames.filter(name => values[name]).length})`;
+  if (loadState !== 'ready') return;
+  const visible = resources.filter(resource => matchesResource(resource, values));
+  list.replaceChildren(...visible.map(createResourceRow));
+  resultCount.textContent = `${visible.length} ${visible.length === 1 ? 'resource' : 'resources'}`;
+  emptyResults.hidden = visible.length !== 0;
+  emptyResults.textContent = resources.length
+    ? 'No resources match your filters. Try another search or Reset.'
+    : 'No resources are available yet. Please check back later.';
+}
+
+async function loadResources() {
+  if (retry.disabled) return;
+  const restoreFocus = document.activeElement === retry;
+  retry.disabled = true;
+  loadState = 'loading';
+  list.setAttribute('aria-busy', 'true');
+  list.replaceChildren();
+  emptyResults.hidden = true;
+  loadError.hidden = true;
+  resultCount.textContent = 'Loading resources…';
+  try {
+    resources = await getResources();
+    loadState = 'ready';
+    applyFilters();
+    retry.hidden = true;
+    if (restoreFocus) resultCount.focus();
+  } catch {
+    loadState = 'error';
+    resultCount.textContent = 'Resources unavailable';
+    loadError.hidden = false;
+    retry.hidden = false;
+  } finally {
+    list.setAttribute('aria-busy', 'false');
+    retry.disabled = false;
+  }
 }
 
 function restoreFilters() {
@@ -65,3 +131,6 @@ window.addEventListener('popstate', restoreFilters);
 desktop.addEventListener('change', () => { filterPanel.open = desktop.matches; });
 filterPanel.open = desktop.matches;
 restoreFilters();
+
+retry.addEventListener('click', loadResources);
+loadResources();
