@@ -1,0 +1,12 @@
+{
+  "name": "axon-hub-mock",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.cjs",
+    "reset": "node reset-db.cjs"
+  },
+  "devDependencies": {
+    "json-server": "0.17.4"
+  }
+}

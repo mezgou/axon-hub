@@ -4,3 +4,7 @@
 
 # Files
 AGENTS.md
+
+# Local mock runtime
+/mock/node_modules/
+/mock/db.json
