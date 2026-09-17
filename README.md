@@ -10,8 +10,9 @@ npm --prefix mock start
 ```
 
 Open http://127.0.0.1:3001/resources or http://127.0.0.1:3001/resources/1.
-The API serves fictional resources on loopback only. Explore loads this catalog;
-the other pages still show local previews.
+The API serves fictional resources on loopback only. Explore and resource detail
+pages load API data. Open details from the catalog, or use `model.html?id=1` and
+`dataset.html?id=4`. Social actions, account forms and profile remain previews.
 
 Keep the API running and serve the repository over HTTP in a second terminal
 (for example, with Python installed):

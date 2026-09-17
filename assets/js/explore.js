@@ -37,16 +37,10 @@ function createResourceRow(resource) {
   badge.textContent = isDataset ? 'Dataset' : 'Model';
   badge.classList.toggle('axon-resource-type--dataset', isDataset);
   const heading = row.querySelector('h3');
-  // Only these two resources have matching previews while details are static.
-  const previewPage = resource.id === 1 ? 'model.html' : resource.id === 4 ? 'dataset.html' : null;
-  if (previewPage) {
-    const link = document.createElement('a');
-    link.href = previewPage;
-    link.textContent = resource.name;
-    heading.append(link);
-  } else {
-    heading.textContent = resource.name;
-  }
+  const link = document.createElement('a');
+  link.href = `${resource.type}.html?id=${resource.id}`;
+  link.textContent = resource.name;
+  heading.append(link);
   row.querySelector('p').textContent = resource.summary;
   for (const name of ['task', 'framework', 'license']) {
     const option = [...form.elements.namedItem(name).options].find(item => item.value === resource[name]);
