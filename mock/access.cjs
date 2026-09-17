@@ -4,6 +4,23 @@ function isPositiveId(value) {
 }
 
 module.exports = function access(request, response, next) {
+  if (request.method === 'POST' && ['/login', '/register'].includes(request.path)) {
+    const body = request.body;
+    const registering = request.path === '/register';
+    const keys = registering ? ['email', 'password', 'displayName'] : ['email', 'password'];
+    if (new URL(request.originalUrl, 'http://127.0.0.1').search
+      || !body || !Object.keys(body).every(key => keys.includes(key))
+      || typeof body.email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)
+      || body.email.length > 254 || typeof body.password !== 'string'
+      || body.password.length < 8 || Buffer.byteLength(body.password, 'utf8') > 72
+      || (registering && (typeof body.displayName !== 'string'
+        || !body.displayName.trim() || body.displayName.trim().length > 60))) {
+      return response.status(400).json({ message: 'Invalid account details.' });
+    }
+    body.email = body.email.trim().toLowerCase();
+    if (registering) body.displayName = body.displayName.trim();
+    return next();
+  }
   const resourcePath = /^\/resources(?:\/([1-9]\d*))?$/.exec(request.path);
   if (request.method !== 'GET' || !resourcePath
     || (resourcePath[1] && !isPositiveId(resourcePath[1]))) {

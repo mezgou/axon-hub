@@ -1,4 +1,8 @@
+import { login } from './services/auth.js';
+import { saveSession, getReturnPath } from './session.js';
+
 const form = document.querySelector('.axon-auth-form');
+const submit = form.querySelector('button[type="submit"]');
 const fields = [...form.querySelectorAll('input')];
 const status = document.querySelector('#form-status');
 const requiredMessages = {
@@ -15,8 +19,9 @@ function showError(field, message) {
   else field.removeAttribute('aria-invalid');
 }
 
-form.addEventListener('submit', event => {
+form.addEventListener('submit', async event => {
   event.preventDefault();
+  if (submit.disabled) return;
   status.textContent = '';
   let firstInvalid = null;
 
@@ -41,10 +46,25 @@ form.addEventListener('submit', event => {
     return;
   }
 
-  form.elements.password.value = '';
-  status.textContent = form.id === 'register-form'
-    ? 'Preview complete. The form is valid; no account was created. Your details were not sent or saved by AxonHub.'
-    : 'Preview complete. The form is valid; you are not signed in. Your details were not sent or saved by AxonHub.';
+  if (form.id === 'register-form') {
+    form.elements.password.value = '';
+    status.textContent = 'Preview complete. The form is valid; no account was created. Your details were not sent or saved by AxonHub.';
+    return;
+  }
+  submit.disabled = true;
+  status.textContent = 'Signing in...';
+  try {
+    const session = await login(form.elements.email.value.trim().toLowerCase(), form.elements.password.value);
+    saveSession(session);
+    location.assign(getReturnPath(new URLSearchParams(location.search).get('returnTo')));
+  } catch (error) {
+    status.textContent = error.status === 400 || error.status === 401
+      ? 'Email or password is incorrect.'
+      : 'Could not sign in. Check the local API and browser session storage, then try again.';
+  } finally {
+    form.elements.password.value = '';
+    submit.disabled = false;
+  }
 });
 
 for (const field of fields) {

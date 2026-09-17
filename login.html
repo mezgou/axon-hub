@@ -13,7 +13,8 @@
     <link href="assets/css/base.css" rel="stylesheet">
     <link href="assets/css/pages.css" rel="stylesheet">
     <link rel="icon" href="assets/icons/axon-mark.svg" type="image/svg+xml">
-    <script src="assets/js/forms.js" defer></script>
+    <script src="assets/js/forms.js" type="module"></script>
+    <script src="assets/js/session.js" type="module"></script>
   </head>
   <body>
     <header class="axon-header">
@@ -35,7 +36,7 @@
         <div class="axon-auth">
           <div class="axon-page-header">
             <h1>Welcome back</h1>
-            <p>Preview only. Try the form with sample details; no account sign-in takes place.</p>
+            <p>Sign in to your local AxonHub demo account.</p>
           </div>
           <form id="login-form" class="axon-auth-form" method="post" novalidate>
             <div>
@@ -51,11 +52,11 @@
               <p id="password-hint" class="form-text mb-0">Use at least 8 characters.</p>
               <p id="password-error" class="axon-field-error" hidden></p>
             </div>
-            <button type="submit" class="btn btn-primary" disabled>Log in (preview)</button>
-            <noscript>Enable JavaScript to try this form preview.</noscript>
+            <button type="submit" class="btn btn-primary" disabled>Log in</button>
+            <noscript>Enable JavaScript to sign in.</noscript>
             <p id="form-status" role="status" class="mb-0"></p>
           </form>
-          <p>New to AxonHub? <a href="register.html">Create an account</a></p>
+          <p>Registration is currently a preview. <a href="register.html">Try the form</a></p>
         </div>
         <aside class="axon-auth-intro" aria-label="About AxonHub">
           <img src="assets/icons/resource-network.svg" width="200" height="160" alt="" aria-hidden="true">

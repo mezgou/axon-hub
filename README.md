@@ -12,7 +12,8 @@ npm --prefix mock start
 Open http://127.0.0.1:3001/resources or http://127.0.0.1:3001/resources/1.
 The API serves fictional resources on loopback only. Explore and resource detail
 pages load API data. Open details from the catalog, or use `model.html?id=1` and
-`dataset.html?id=4`. Social actions, account forms and profile remain previews.
+`dataset.html?id=4`. Login uses the local API; registration UI, social actions
+and profile remain previews.
 
 Keep the API running and serve the repository over HTTP in a second terminal
 (for example, with Python installed):
@@ -25,9 +26,22 @@ Open http://127.0.0.1:8080/index.html. Opening the HTML directly via `file://`
 does not support the JavaScript modules. If the API is unavailable, Explore shows
 an error and a Retry button.
 
-Only resource GET requests are enabled. Lists accept `userId` and
-`sourceResourceId` as positive integer filters. Other collections and write
-requests are blocked.
+Resource lists accept `userId` and `sourceResourceId` as positive integer
+filters. Account endpoints `/login` and `/register` accept POST; direct user
+collection access and resource writes remain blocked.
+
+## Demo login
+
+Use `alex@example.test` or `jamie@example.test` with password `AxonDemo2026!`.
+These are fictional local accounts. Login stores a token and safe user fields
+in sessionStorage for this browser tab; Log out clears them. Passwords are not
+stored by the frontend. Registration through the UI is still a preview.
+
+After updating from the resource-only mock, stop the API and run the reset
+command below once to install the demo accounts. This discards local demo data.
+The mock auth package uses a fixed demonstration signing key: keep this server
+local and do not use real credentials. `jsonwebtoken` is pinned through an npm
+override to 9.0.3 to replace the auth package's vulnerable 8.x dependency.
 
 On first start, `mock/seed.json` is copied to ignored `mock/db.json`.
 Restarting preserves that database. To discard local demo changes, stop the

@@ -385,7 +385,20 @@
       }
     }
   ],
-  "users": [],
+  "users": [
+    {
+      "id": 1,
+      "email": "alex@example.test",
+      "displayName": "Alex Morgan",
+      "password": "$2a$10$./O3a3k6RX3Co4jEMb/YTu9QYLadw6FtPc3RDRsFxg6sAr4AIKjcG"
+    },
+    {
+      "id": 2,
+      "email": "jamie@example.test",
+      "displayName": "Jamie Lee",
+      "password": "$2a$10$mF7PmhcxA9/nO86iX1qJk.0y8O182D5UgTE0a6RyA5uRFxPj1IbX6"
+    }
+  ],
   "stars": [],
   "subscriptions": [],
   "discussions": []

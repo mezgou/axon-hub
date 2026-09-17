@@ -1,6 +1,8 @@
 const { copyFileSync, constants } = require('node:fs');
 const path = require('node:path');
 const jsonServer = require('json-server');
+const auth = require('json-server-auth');
+const cors = require('cors');
 const access = require('./access.cjs');
 
 const databasePath = path.join(__dirname, 'db.json');
@@ -12,10 +14,17 @@ try {
 
 const app = jsonServer.create();
 const router = jsonServer.router(databasePath);
-// Keep the default static middleware behind the API allowlist.
+app.db = router.db;
+app.use(cors({ origin: ['http://127.0.0.1:8080', 'http://localhost:8080'],
+  methods: ['GET', 'POST'], allowedHeaders: ['Content-Type', 'Authorization'] }));
+app.use(jsonServer.bodyParser);
 app.use(access);
-app.use(jsonServer.defaults());
+app.use(auth.rewriter({ resources: 644 }));
+app.use(auth);
 app.use(router);
+app.use((error, request, response, next) => {
+  response.status(error.status === 400 ? 400 : 500).json({ message: 'Request could not be processed.' });
+});
 
 const server = app.listen(3001, '127.0.0.1', () => {
   console.log('AxonHub mock: http://127.0.0.1:3001/resources');
