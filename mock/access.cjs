@@ -19,6 +19,9 @@ module.exports = function access(request, response, next) {
     }
     body.email = body.email.trim().toLowerCase();
     if (registering) body.displayName = body.displayName.trim();
+    if (registering && request.app.db.get('users').find({ email: body.email }).value()) {
+      return response.status(409).json({ message: 'Email is already registered.' });
+    }
     return next();
   }
   const resourcePath = /^\/resources(?:\/([1-9]\d*))?$/.exec(request.path);

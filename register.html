@@ -36,7 +36,7 @@
         <div class="axon-auth">
           <div class="axon-page-header">
             <h1>Create an account</h1>
-            <p>Preview only. Try the form with sample details; no account will be created.</p>
+            <p>Create a local demo account. Use sample details, not real credentials.</p>
           </div>
           <form id="register-form" class="axon-auth-form" method="post" novalidate>
             <div>
@@ -49,7 +49,7 @@
             <div>
               <label for="email" class="form-label">Email</label>
               <input id="email" name="email" type="email" class="form-control"
-              autocomplete="email" required aria-describedby="email-error">
+              autocomplete="email" required maxlength="254" aria-describedby="email-error">
               <p id="email-error" class="axon-field-error" hidden></p>
             </div>
             <div>
@@ -59,8 +59,8 @@
               <p id="password-hint" class="form-text mb-0">Use at least 8 characters.</p>
               <p id="password-error" class="axon-field-error" hidden></p>
             </div>
-            <button type="submit" class="btn btn-primary" disabled>Sign up (preview)</button>
-            <noscript>Enable JavaScript to try this form preview.</noscript>
+            <button type="submit" class="btn btn-primary" disabled>Sign up</button>
+            <noscript>Enable JavaScript to create an account.</noscript>
             <p id="form-status" role="status" class="mb-0"></p>
           </form>
           <p>Already have an account? <a href="login.html">Log in</a></p>

@@ -1,10 +1,11 @@
-import { login } from './services/auth.js';
+import { login, register } from './services/auth.js';
 import { saveSession, getReturnPath } from './session.js';
 
 const form = document.querySelector('.axon-auth-form');
 const submit = form.querySelector('button[type="submit"]');
 const fields = [...form.querySelectorAll('input')];
 const status = document.querySelector('#form-status');
+const isRegistering = form.id === 'register-form';
 const requiredMessages = {
   displayName: 'Enter your display name.',
   email: 'Enter your email address.',
@@ -36,6 +37,8 @@ form.addEventListener('submit', async event => {
       message = `Use at least ${field.minLength} characters.`;
     } else if (field.validity.tooLong || (field.maxLength > 0 && field.value.length > field.maxLength)) {
       message = `Use no more than ${field.maxLength} characters.`;
+    } else if (field.name === 'password' && new TextEncoder().encode(field.value).length > 72) {
+      message = 'Use a shorter password: at most 72 bytes (some characters use more than one).';
     }
     showError(field, message);
     if (message && !firstInvalid) firstInvalid = field;
@@ -46,19 +49,30 @@ form.addEventListener('submit', async event => {
     return;
   }
 
-  if (form.id === 'register-form') {
-    form.elements.password.value = '';
-    status.textContent = 'Preview complete. The form is valid; no account was created. Your details were not sent or saved by AxonHub.';
-    return;
-  }
   submit.disabled = true;
-  status.textContent = 'Signing in...';
+  status.textContent = isRegistering ? 'Creating your account...' : 'Signing in...';
+  let accountCreated = false;
   try {
-    const session = await login(form.elements.email.value.trim().toLowerCase(), form.elements.password.value);
+    const email = form.elements.email.value.trim().toLowerCase();
+    const password = form.elements.password.value;
+    const session = isRegistering
+      ? await register(email, password, form.elements.displayName.value)
+      : await login(email, password);
+    accountCreated = isRegistering;
     saveSession(session);
-    location.assign(getReturnPath(new URLSearchParams(location.search).get('returnTo')));
+    location.assign(isRegistering ? 'index.html' : getReturnPath(new URLSearchParams(location.search).get('returnTo')));
   } catch (error) {
-    status.textContent = error.status === 400 || error.status === 401
+    if (isRegistering) {
+      if (error.status === 409) {
+        showError(form.elements.email, 'This email is already registered. Log in or use another email.');
+        form.elements.email.focus();
+      }
+      status.textContent = accountCreated
+        ? 'Account created, but the session could not be saved. Allow browser session storage, then log in.'
+        : error.status === 409 ? 'Account not created. Check the highlighted email field.'
+        : error.status === 400 ? 'Check your account details and try again.'
+        : 'Could not confirm registration. Check the local API. Try logging in before submitting again.';
+    } else status.textContent = error.status === 400 || error.status === 401
       ? 'Email or password is incorrect.'
       : 'Could not sign in. Check the local API and browser session storage, then try again.';
   } finally {

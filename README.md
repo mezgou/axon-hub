@@ -12,7 +12,7 @@ npm --prefix mock start
 Open http://127.0.0.1:3001/resources or http://127.0.0.1:3001/resources/1.
 The API serves fictional resources on loopback only. Explore and resource detail
 pages load API data. Open details from the catalog, or use `model.html?id=1` and
-`dataset.html?id=4`. Login uses the local API; registration UI, social actions
+`dataset.html?id=4`. Login and registration use the local API; social actions
 and profile remain previews.
 
 Keep the API running and serve the repository over HTTP in a second terminal
@@ -35,7 +35,8 @@ collection access and resource writes remain blocked.
 Use `alex@example.test` or `jamie@example.test` with password `AxonDemo2026!`.
 These are fictional local accounts. Login stores a token and safe user fields
 in sessionStorage for this browser tab; Log out clears them. Passwords are not
-stored by the frontend. Registration through the UI is still a preview.
+stored by the frontend. You can also create a fictional account through Sign up;
+it is saved in the local database and signs you in automatically.
 
 After updating from the resource-only mock, stop the API and run the reset
 command below once to install the demo accounts. This discards local demo data.
