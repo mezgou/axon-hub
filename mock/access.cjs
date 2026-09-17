@@ -24,6 +24,38 @@ module.exports = function access(request, response, next) {
     }
     return next();
   }
+  const starPath = /^\/stars(?:\/([1-9]\d*))?$/.exec(request.path);
+  if (starPath) {
+    const query = [...new URL(request.originalUrl, 'http://127.0.0.1').searchParams];
+    const db = request.app.db;
+    if (request.method === 'GET' && !starPath[1]) {
+      if (query.length !== 1 || query[0][0] !== 'resourceId' || !isPositiveId(query[0][1])) {
+        return response.status(400).json({ message: 'A resourceId filter is required.' });
+      }
+      return next();
+    }
+    if (query.length) return response.status(400).json({ message: 'Unsupported query parameters.' });
+    if (request.method === 'POST' && !starPath[1]) {
+      const body = request.body;
+      if (!body || !Object.keys(body).every(key => ['userId', 'resourceId', 'createdAt'].includes(key))
+        || !Number.isSafeInteger(body.userId) || body.userId <= 0
+        || !Number.isSafeInteger(body.resourceId) || body.resourceId <= 0
+        || typeof body.createdAt !== 'string' || !Number.isFinite(Date.parse(body.createdAt))) {
+        return response.status(400).json({ message: 'Invalid star details.' });
+      }
+      if (!db.get('resources').find({ id: body.resourceId }).value()) {
+        return response.status(404).json({ message: 'Resource not found.' });
+      }
+      return next();
+    }
+    if (request.method === 'DELETE' && isPositiveId(starPath[1])) {
+      if (!db.get('stars').find({ id: Number(starPath[1]) }).value()) {
+        return response.status(404).json({ message: 'Star not found.' });
+      }
+      return next();
+    }
+    return response.status(403).json({ message: 'Endpoint is not available.' });
+  }
   const resourcePath = /^\/resources(?:\/([1-9]\d*))?$/.exec(request.path);
   if (request.method !== 'GET' || !resourcePath
     || (resourcePath[1] && !isPositiveId(resourcePath[1]))) {

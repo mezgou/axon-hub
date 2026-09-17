@@ -13,7 +13,7 @@ Open http://127.0.0.1:3001/resources or http://127.0.0.1:3001/resources/1.
 The API serves fictional resources on loopback only. Explore and resource detail
 pages load API data. Open details from the catalog, or use `model.html?id=1` and
 `dataset.html?id=4`. Login, registration and your profile use the local API;
-social actions and subscriptions remain previews. After signing in, Your library
+stars are saved through the API, while subscriptions and discussions remain previews. After signing in, Your library
 shows your account and public resources; a new account starts with an empty list.
 
 Keep the API running and serve the repository over HTTP in a second terminal
@@ -30,6 +30,8 @@ an error and a Retry button.
 Resource lists accept `userId` and `sourceResourceId` as positive integer
 filters. Account endpoints `/login` and `/register` accept POST; direct user
 collection access and resource writes remain blocked.
+Stars support public `GET /stars?resourceId=1`, authenticated `POST /stars`,
+and owner-only `DELETE /stars/:id`. Counts use distinct users.
 
 ## Demo login
 

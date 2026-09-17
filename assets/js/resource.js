@@ -1,4 +1,6 @@
 import { getResource } from './services/resources.js';
+import { getStars, addStar, removeStar } from './services/social.js';
+import { getSession } from './session.js';
 
 const content = document.querySelector('#resource-content');
 const status = document.querySelector('#resource-status');
@@ -7,6 +9,74 @@ const pageType = document.querySelector('main').dataset.resourceType;
 const params = new URLSearchParams(location.search);
 const rawId = params.get('id') ?? (pageType === 'model' ? '1' : '4');
 const id = Number(rawId);
+const starButton = document.querySelector('#star-resource');
+const starStatus = document.querySelector('#star-status');
+const starRetry = document.querySelector('#retry-stars');
+const starLogin = document.querySelector('#star-login');
+let stars = [];
+
+function renderStars() {
+  const userId = getSession()?.user.id;
+  starButton.setAttribute('aria-pressed', String(stars.some(star => star.userId === userId)));
+  document.querySelector('#star-count').textContent = new Set(stars.map(star => star.userId)).size;
+  starLogin.hidden = Boolean(userId);
+  starLogin.href = `login.html?returnTo=${encodeURIComponent(`${pageType}.html?id=${id}`)}`;
+}
+
+async function loadStars() {
+  const restoreFocus = document.activeElement === starRetry;
+  starButton.disabled = true;
+  starRetry.disabled = true;
+  starStatus.textContent = 'Loading stars…';
+  try {
+    stars = await getStars(id);
+    renderStars();
+    starStatus.textContent = '';
+    starRetry.hidden = true;
+    starButton.disabled = false;
+    if (restoreFocus) starButton.focus();
+  } catch {
+    starStatus.textContent = 'Could not load stars. Please retry.';
+    starRetry.hidden = false;
+  } finally { starRetry.disabled = false; }
+}
+
+starRetry.addEventListener('click', loadStars);
+window.addEventListener('pageshow', event => {
+  if (event.persisted && !content.hidden && validId) loadStars();
+});
+starButton.addEventListener('click', async () => {
+  if (starButton.disabled) return;
+  const session = getSession();
+  if (!session) {
+    renderStars();
+    starStatus.textContent = 'Log in to star this resource.';
+    starLogin.focus();
+    return;
+  }
+  const remove = starButton.getAttribute('aria-pressed') === 'true';
+  starButton.disabled = true;
+  starStatus.textContent = 'Saving star…';
+  try {
+    // Re-read before mutation so a retry does not repeat an uncertain POST.
+    const current = await getStars(id);
+    const own = current.filter(star => star.userId === session.user.id);
+    if (remove) {
+      for (const star of own) await removeStar(star.id);
+    } else if (!own.length) await addStar(id, session.user.id);
+    stars = await getStars(id);
+    renderStars();
+    starStatus.textContent = remove ? 'Star removed.' : 'Star saved.';
+  } catch (error) {
+    starStatus.textContent = error.status === 401 ? 'Your session expired. Log in to continue.'
+      : 'Could not confirm the change. Reload stars before trying again.';
+    starRetry.hidden = false;
+    renderStars();
+    return;
+  } finally {
+    starButton.disabled = !starRetry.hidden;
+  }
+});
 const validId = params.getAll('id').length <= 1 && /^[1-9]\d*$/.test(rawId)
   && Number.isSafeInteger(id);
 const labels = {
@@ -86,6 +156,7 @@ async function loadResource() {
     content.hidden = false;
     status.textContent = 'Resource loaded.';
     retry.hidden = true;
+    loadStars();
     if (restoreFocus) status.focus();
   } catch (error) {
     const missing = error.status === 404;
