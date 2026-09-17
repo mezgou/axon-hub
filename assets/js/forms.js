@@ -60,7 +60,7 @@ form.addEventListener('submit', async event => {
       : await login(email, password);
     accountCreated = isRegistering;
     saveSession(session);
-    location.assign(isRegistering ? 'index.html' : getReturnPath(new URLSearchParams(location.search).get('returnTo')));
+    location.assign(isRegistering ? 'profile.html' : getReturnPath(new URLSearchParams(location.search).get('returnTo')));
   } catch (error) {
     if (isRegistering) {
       if (error.status === 409) {

@@ -12,8 +12,9 @@ npm --prefix mock start
 Open http://127.0.0.1:3001/resources or http://127.0.0.1:3001/resources/1.
 The API serves fictional resources on loopback only. Explore and resource detail
 pages load API data. Open details from the catalog, or use `model.html?id=1` and
-`dataset.html?id=4`. Login and registration use the local API; social actions
-and profile remain previews.
+`dataset.html?id=4`. Login, registration and your profile use the local API;
+social actions and subscriptions remain previews. After signing in, Your library
+shows your account and public resources; a new account starts with an empty list.
 
 Keep the API running and serve the repository over HTTP in a second terminal
 (for example, with Python installed):

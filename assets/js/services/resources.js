@@ -19,10 +19,14 @@ export async function getResource(id) {
   return resource;
 }
 
-export async function getResources() {
-  const resources = await getJson('/resources');
+export async function getResources(userId) {
+  if (userId !== undefined && (!Number.isSafeInteger(userId) || userId <= 0)) {
+    throw new Error('Invalid user ID.');
+  }
+  const resources = await getJson(userId === undefined ? '/resources' : `/resources?userId=${userId}`);
   if (!Array.isArray(resources) || !resources.every(resource => resource
     && Number.isSafeInteger(resource.id) && resource.id > 0
+    && (userId === undefined || resource.userId === userId)
     && ['model', 'dataset'].includes(resource.type)
     && ['name', 'summary', 'task', 'framework', 'license'].every(key => typeof resource[key] === 'string')
     && Number.isFinite(resource.sizeBytes) && resource.sizeBytes >= 0)) {

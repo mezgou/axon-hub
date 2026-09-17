@@ -27,14 +27,14 @@ export function clearSession() {
 }
 
 export function getReturnPath(value) {
-  const fallback = 'index.html';
+  const fallback = 'profile.html';
   if (!value) return fallback;
   let url;
   try { url = new URL(value, location.href); } catch { return fallback; }
   const file = url.pathname.split('/').pop();
   if (url.origin !== location.origin || url.username || url.password
     || url.pathname !== new URL(file, location.href).pathname
-    || !['index.html', 'model.html', 'dataset.html'].includes(file)) return fallback;
+    || !['index.html', 'model.html', 'dataset.html', 'profile.html'].includes(file)) return fallback;
   return `${file}${url.search}${url.hash}`;
 }
 
