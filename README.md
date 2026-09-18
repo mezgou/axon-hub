@@ -38,7 +38,9 @@ Your library lists subscribed resources and lets you unsubscribe. These are save
 resource links, not email or push notifications.
 Discussions support public `GET /discussions?resourceId=1&_sort=createdAt&_order=asc`
 and authenticated `POST /discussions`. Comments accept 1–1000 characters of plain
-text; editing and deletion are not enabled yet. A failed post keeps the draft in
+text. Owners can edit with `PATCH /discussions/:id` and delete with
+`DELETE /discussions/:id`; deletion requires confirmation in the UI.
+A failed post or edit keeps the draft in
 the form; reload comments before retrying an uncertain request.
 
 ## Demo login

@@ -16,7 +16,7 @@ const app = jsonServer.create();
 const router = jsonServer.router(databasePath);
 app.db = router.db;
 app.use(cors({ origin: ['http://127.0.0.1:8080', 'http://localhost:8080'],
-  methods: ['GET', 'POST', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization'] }));
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'], allowedHeaders: ['Content-Type', 'Authorization'] }));
 app.use(jsonServer.bodyParser);
 app.use(access);
 app.use(auth.rewriter({ resources: 644, stars: 644, subscriptions: 644, discussions: 644 }));

@@ -1,4 +1,4 @@
-import { getComments, postComment } from './services/social.js';
+import { getComments, postComment, editComment, deleteComment } from './services/social.js';
 import { getSession } from './session.js';
 
 export function initDiscussion(resourceId) {
@@ -14,6 +14,105 @@ export function initDiscussion(resourceId) {
   const retry = document.querySelector('#retry-comments');
   const login = document.querySelector('#comment-login');
   let loadId = 0;
+  let activeEditor = false;
+
+  function ownerControls(row, comment) {
+    if (getSession()?.user.id !== comment.userId) return;
+    const controls = document.createElement('div');
+    controls.className = 'd-flex flex-wrap gap-2';
+    function button(text) {
+      const element = document.createElement('button');
+      element.type = 'button';
+      element.className = 'btn btn-outline-primary';
+      element.textContent = text;
+      return element;
+    }
+    const edit = button('Edit');
+    const remove = button('Delete');
+    controls.append(edit, remove);
+    row.append(controls);
+
+    function openEditor(deleting) {
+      if (activeEditor || submit.disabled || retry.disabled || getSession()?.user.id !== comment.userId) return;
+      activeEditor = true;
+      postStatus.textContent = '';
+      submit.disabled = true;
+      retry.disabled = true;
+      controls.hidden = true;
+      controls.classList.remove('d-flex');
+      const panel = document.createElement('div');
+      const label = document.createElement('label');
+      const input = document.createElement('textarea');
+      input.id = `edit-comment-${comment.id}`;
+      input.className = 'form-control mb-3';
+      input.rows = 3;
+      input.maxLength = 1000;
+      input.value = comment.body;
+      label.htmlFor = input.id;
+      label.textContent = 'Edit your comment';
+      const message = document.createElement('p');
+      message.setAttribute('role', 'status');
+      message.id = `edit-status-${comment.id}`;
+      input.setAttribute('aria-describedby', message.id);
+      input.addEventListener('input', () => { input.removeAttribute('aria-invalid'); message.textContent = ''; });
+      const save = button(deleting ? 'Confirm delete' : 'Save changes');
+      const cancel = button('Cancel');
+      const actions = document.createElement('div');
+      actions.className = 'd-flex flex-wrap gap-2';
+      actions.append(save, cancel);
+      if (deleting) message.textContent = 'Delete this comment? This cannot be undone.';
+      else panel.append(label, input);
+      panel.append(message, actions);
+      row.append(panel);
+      (deleting ? cancel : input).focus();
+      function close() {
+        panel.remove();
+        controls.hidden = false;
+        controls.classList.add('d-flex');
+        activeEditor = false;
+        submit.disabled = false;
+        retry.disabled = false;
+      }
+      cancel.addEventListener('click', () => { close(); (deleting ? remove : edit).focus(); });
+      save.addEventListener('click', async () => {
+        if (save.disabled) return;
+        const body = input.value.trim();
+        if (!deleting && (!body || body.length > 1000)) {
+          message.textContent = 'Use 1–1000 characters.';
+          input.setAttribute('aria-invalid', 'true');
+          input.focus();
+          return;
+        }
+        save.disabled = cancel.disabled = true;
+        input.readOnly = true;
+        message.textContent = deleting ? 'Deleting comment…' : 'Saving changes…';
+        try {
+          if (deleting) await deleteComment(comment.id);
+          else await editComment(comment.id, body);
+          close();
+          if (deleting) {
+            row.remove();
+            status.textContent = `Comment deleted. ${list.children.length} comments remaining.`;
+            status.focus();
+          } else {
+            comment.body = body;
+            row.querySelector('[data-body]').textContent = body;
+            postStatus.textContent = 'Comment updated.';
+            edit.focus();
+          }
+        } catch (failure) {
+          message.textContent = failure.status === 404 ? 'This comment no longer exists. Cancel and reload comments.'
+            : failure.status === 401 ? 'Your session expired. Your text is preserved; log in to continue.'
+            : failure.status === 403 ? 'You do not have permission to change this comment.'
+            : 'Could not confirm the change. Your text is preserved. Cancel and reload before retrying.';
+          updateSession();
+          retry.hidden = false;
+        } finally { save.disabled = cancel.disabled = false; input.readOnly = false; }
+      });
+    }
+    edit.addEventListener('click', () => openEditor(false));
+    remove.addEventListener('click', () => openEditor(true));
+  }
 
   function updateSession() {
     login.hidden = Boolean(getSession());
@@ -21,6 +120,7 @@ export function initDiscussion(resourceId) {
   }
 
   async function loadComments() {
+    if (activeEditor) return;
     const requestId = ++loadId;
     const restoreFocus = document.activeElement === retry;
     retry.disabled = true;
@@ -38,6 +138,7 @@ export function initDiscussion(resourceId) {
         time.dateTime = comment.createdAt;
         time.textContent = new Date(comment.createdAt).toLocaleString();
         row.querySelector('[data-body]').textContent = comment.body;
+        ownerControls(row, comment);
         return row;
       }));
       status.textContent = rows.length ? `${rows.length} ${rows.length === 1 ? 'comment' : 'comments'}`

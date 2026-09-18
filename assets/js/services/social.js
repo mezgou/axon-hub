@@ -1,5 +1,14 @@
 import { getJson, requestJson } from './http.js';
 
+export function editComment(id, body) {
+  return requestJson(`/discussions/${id}`, { method: 'PATCH', authenticated: true,
+    body: { body, updatedAt: new Date().toISOString() } });
+}
+
+export function deleteComment(id) {
+  return requestJson(`/discussions/${id}`, { method: 'DELETE', authenticated: true });
+}
+
 export async function getComments(resourceId) {
   const rows = await getJson(`/discussions?resourceId=${resourceId}&_sort=createdAt&_order=asc`);
   if (!Array.isArray(rows) || !rows.every(row => row && row.resourceId === resourceId

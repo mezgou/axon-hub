@@ -24,6 +24,25 @@ module.exports = function access(request, response, next) {
     }
     return next();
   }
+  const commentPath = /^\/discussions\/([1-9]\d*)$/.exec(request.path);
+  if (commentPath && ['PATCH', 'DELETE'].includes(request.method)) {
+    if (!isPositiveId(commentPath[1]) || new URL(request.originalUrl, 'http://127.0.0.1').search) {
+      return response.status(400).json({ message: 'Invalid comment request.' });
+    }
+    if (!request.app.db.get('discussions').find({ id: Number(commentPath[1]) }).value()) {
+      return response.status(404).json({ message: 'Comment not found.' });
+    }
+    if (request.method === 'PATCH') {
+      const body = request.body;
+      if (!body || !Object.keys(body).every(key => ['body', 'updatedAt'].includes(key))
+        || typeof body.body !== 'string' || !body.body.trim() || body.body.trim().length > 1000
+        || typeof body.updatedAt !== 'string' || !Number.isFinite(Date.parse(body.updatedAt))) {
+        return response.status(400).json({ message: 'Invalid comment update.' });
+      }
+      body.body = body.body.trim();
+    }
+    return next();
+  }
   if (request.path === '/discussions') {
     const query = [...new URL(request.originalUrl, 'http://127.0.0.1').searchParams];
     if (request.method === 'GET') {
