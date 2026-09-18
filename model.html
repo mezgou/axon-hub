@@ -110,20 +110,28 @@
               </details>
             </section>
             <section aria-labelledby="discussion-heading">
-              <h2 id="discussion-heading" class="axon-icon-label"><img class="axon-icon" src="assets/icons/chat-left-text.svg" width="20" height="20" alt="" aria-hidden="true"> Discussion preview</h2>
-              <details>
-                <summary>Show sample discussion (1 comment)</summary>
-                <p class="mt-3">Sample conversation only. Posting comments is not available in this preview.</p>
-                <ul class="list-unstyled">
-                  <li class="axon-comment">
-                    <div class="axon-comment-author">
-                      <span class="axon-avatar axon-avatar--small" aria-hidden="true">JL</span>
-                      <p class="fw-semibold mb-0">Jamie Lee <span class="d-block fw-normal">Sample comment</span></p>
-                    </div>
-                    <p>The manifest makes the configuration easy to inspect. Which revision should I compare with my baseline?</p>
-                  </li>
-                </ul>
-              </details>
+              <h2 id="discussion-heading" class="axon-icon-label"><img class="axon-icon" src="assets/icons/chat-left-text.svg" width="20" height="20" alt="" aria-hidden="true"> Discussion</h2>
+              <p id="comments-status" role="status" tabindex="-1"></p>
+              <button id="retry-comments" class="btn btn-outline-primary mb-3" type="button" hidden>Reload comments</button>
+              <ul id="comment-list" class="list-unstyled" aria-busy="true"></ul>
+              <template id="comment-template">
+                <li class="axon-comment">
+                  <div class="axon-comment-author">
+                    <span class="axon-avatar axon-avatar--small" aria-hidden="true"></span>
+                    <div><p class="fw-semibold mb-0" data-author></p><time class="small axon-muted"></time></div>
+                  </div>
+                  <p class="axon-comment-body" data-body></p>
+                </li>
+              </template>
+              <a id="comment-login" href="login.html" class="mb-3">Log in to comment</a>
+              <form id="comment-form" novalidate>
+                <label for="comment-body" class="form-label">Your comment</label>
+                <textarea id="comment-body" name="body" class="form-control" rows="3" maxlength="1000" required aria-describedby="comment-hint comment-error"></textarea>
+                <p id="comment-hint" class="form-text">1–1000 characters. Plain text only.</p>
+                <p id="comment-error" class="axon-field-error"></p>
+                <button type="submit" class="btn btn-primary" disabled>Post comment</button>
+                <p id="comment-status" role="status" class="mt-3"></p>
+              </form>
             </section>
             <section aria-labelledby="download-heading">
               <h2 id="download-heading">Download information</h2>

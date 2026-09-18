@@ -195,10 +195,15 @@
 }
 
 .axon-comment {
+  overflow-wrap: anywhere;
   padding: 16px;
   margin-top: 16px;
   border-left: 3px solid #92b49d;
   background: #fff;
+}
+
+.axon-comment-body {
+  white-space: pre-wrap;
 }
 
 .axon-comment-author {

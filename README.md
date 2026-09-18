@@ -13,7 +13,7 @@ Open http://127.0.0.1:3001/resources or http://127.0.0.1:3001/resources/1.
 The API serves fictional resources on loopback only. Explore and resource detail
 pages load API data. Open details from the catalog, or use `model.html?id=1` and
 `dataset.html?id=4`. Login, registration and your profile use the local API;
-stars and resource subscriptions are saved through the API; discussions remain a preview. After signing in, Your library
+stars, resource subscriptions and comments are saved through the API. After signing in, Your library
 shows your account and public resources; a new account starts with an empty list.
 
 Keep the API running and serve the repository over HTTP in a second terminal
@@ -36,6 +36,10 @@ Subscriptions support `GET /subscriptions?userId=1` or `?resourceId=1`,
 authenticated `POST /subscriptions`, and owner-only `DELETE /subscriptions/:id`.
 Your library lists subscribed resources and lets you unsubscribe. These are saved
 resource links, not email or push notifications.
+Discussions support public `GET /discussions?resourceId=1&_sort=createdAt&_order=asc`
+and authenticated `POST /discussions`. Comments accept 1–1000 characters of plain
+text; editing and deletion are not enabled yet. A failed post keeps the draft in
+the form; reload comments before retrying an uncertain request.
 
 ## Demo login
 

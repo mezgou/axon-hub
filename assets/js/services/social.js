@@ -1,5 +1,23 @@
 import { getJson, requestJson } from './http.js';
 
+export async function getComments(resourceId) {
+  const rows = await getJson(`/discussions?resourceId=${resourceId}&_sort=createdAt&_order=asc`);
+  if (!Array.isArray(rows) || !rows.every(row => row && row.resourceId === resourceId
+    && Number.isSafeInteger(row.id) && row.id > 0 && Number.isSafeInteger(row.userId) && row.userId > 0
+    && typeof row.body === 'string' && typeof row.authorName === 'string'
+    && typeof row.createdAt === 'string' && Number.isFinite(Date.parse(row.createdAt)))) {
+    throw new Error('Invalid comments.');
+  }
+  return rows;
+}
+
+export function postComment(resourceId, user, body) {
+  const timestamp = new Date().toISOString();
+  return requestJson('/discussions', { method: 'POST', authenticated: true,
+    body: { resourceId, userId: user.id, authorName: user.displayName, body,
+      createdAt: timestamp, updatedAt: timestamp } });
+}
+
 export async function getStars(resourceId) {
   const stars = await getJson(`/stars?resourceId=${resourceId}`);
   if (!Array.isArray(stars) || !stars.every(star => star

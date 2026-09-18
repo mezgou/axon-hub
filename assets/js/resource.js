@@ -1,4 +1,5 @@
 import { getResource } from './services/resources.js';
+import { initDiscussion } from './discussion.js';
 import { getStars, addStar, removeStar, getSubscriptions, setSubscription } from './services/social.js';
 import { getSession } from './session.js';
 
@@ -211,6 +212,7 @@ async function loadResource() {
       return;
     }
     renderResource(resource);
+    initDiscussion(id);
     document.querySelector('#resource-owner').hidden = false;
     content.hidden = false;
     status.textContent = 'Resource loaded.';

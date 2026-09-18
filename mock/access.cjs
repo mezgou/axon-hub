@@ -24,6 +24,36 @@ module.exports = function access(request, response, next) {
     }
     return next();
   }
+  if (request.path === '/discussions') {
+    const query = [...new URL(request.originalUrl, 'http://127.0.0.1').searchParams];
+    if (request.method === 'GET') {
+      const keys = new Map(query);
+      if (query.length !== 3 || keys.size !== 3 || !isPositiveId(keys.get('resourceId'))
+        || keys.get('_sort') !== 'createdAt' || keys.get('_order') !== 'asc') {
+        return response.status(400).json({ message: 'Invalid discussion query.' });
+      }
+      return next();
+    }
+    if (request.method === 'POST') {
+      const body = request.body;
+      const fields = ['userId', 'resourceId', 'authorName', 'body', 'createdAt', 'updatedAt'];
+      if (query.length || !body || !Object.keys(body).every(key => fields.includes(key))
+        || !['userId', 'resourceId'].every(key => Number.isSafeInteger(body[key]) && body[key] > 0)
+        || typeof body.authorName !== 'string' || !body.authorName.trim() || body.authorName.trim().length > 60
+        || typeof body.body !== 'string' || !body.body.trim() || body.body.trim().length > 1000
+        || !['createdAt', 'updatedAt'].every(key => typeof body[key] === 'string'
+          && Number.isFinite(Date.parse(body[key])))) {
+        return response.status(400).json({ message: 'Invalid comment details.' });
+      }
+      if (!request.app.db.get('resources').find({ id: body.resourceId }).value()) {
+        return response.status(404).json({ message: 'Resource not found.' });
+      }
+      body.body = body.body.trim();
+      body.authorName = body.authorName.trim();
+      return next();
+    }
+    return response.status(403).json({ message: 'Endpoint is not available.' });
+  }
   const relationPath = /^\/(stars|subscriptions)(?:\/([1-9]\d*))?$/.exec(request.path);
   if (relationPath) {
     const query = [...new URL(request.originalUrl, 'http://127.0.0.1').searchParams];
