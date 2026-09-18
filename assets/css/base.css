@@ -21,6 +21,30 @@ a:hover {
   outline-offset: 4px;
 }
 
+.axon-skip-link {
+  position: fixed;
+  z-index: 1050;
+  inset-block-start: 12px;
+  inset-inline-start: 12px;
+  max-width: calc(100% - 24px);
+  padding: 12px 16px;
+  border: 2px solid #17654c;
+  border-radius: 8px;
+  background: #fff;
+  color: #17654c;
+  font-weight: 650;
+  transform: translateY(calc(-100% - 24px));
+}
+
+.axon-skip-link:focus {
+  transform: none;
+}
+
+main:focus-visible {
+  outline: 3px solid #247a60;
+  outline-offset: -3px;
+}
+
 .axon-container {
   max-width: 1200px;
   padding-inline: 32px;
