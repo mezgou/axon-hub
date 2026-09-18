@@ -67,13 +67,11 @@
       </section>
 
       <section class="axon-profile-section" aria-labelledby="subscriptions-heading">
-        <h2 id="subscriptions-heading">Subscriptions (preview)</h2>
-        <div class="axon-empty-state">
-          <img class="axon-icon" src="assets/icons/bell.svg" width="18" height="18" alt="" aria-hidden="true">
-          <h3>Subscriptions are not connected yet.</h3>
-          <p>Preview only. Saved subscriptions will be available in a later update.</p>
-          <a class="btn btn-outline-primary" href="index.html">Explore resources <img class="axon-icon" src="assets/icons/arrow-up-right.svg" width="18" height="18" alt="" aria-hidden="true"></a>
-        </div>
+        <h2 id="subscriptions-heading">Subscriptions</h2>
+        <p id="subscriptions-status" role="status" tabindex="-1"></p>
+        <button id="retry-subscriptions" type="button" class="btn btn-outline-primary" hidden>Reload subscriptions</button>
+        <ul id="subscriptions-list" class="axon-resource-list mt-3 mb-3"></ul>
+        <a class="btn btn-outline-primary" href="index.html">Explore resources</a>
       </section>
     </main>
     <footer class="axon-footer">

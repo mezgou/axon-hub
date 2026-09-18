@@ -1,5 +1,6 @@
 import { getSession } from './session.js';
 import { getResources } from './services/resources.js';
+import { getSubscriptions, setSubscription } from './services/social.js';
 
 const main = document.querySelector('main');
 const list = document.querySelector('#your-resources');
@@ -8,6 +9,66 @@ const retry = document.querySelector('#retry-resources');
 const empty = document.querySelector('#empty-resources');
 const template = document.querySelector('#profile-resource-template');
 let loadId = 0;
+const subscriptionsList = document.querySelector('#subscriptions-list');
+const subscriptionsStatus = document.querySelector('#subscriptions-status');
+const subscriptionsRetry = document.querySelector('#retry-subscriptions');
+let subscriptionsLoadId = 0;
+
+async function loadSubscriptions() {
+  const restoreFocus = document.activeElement === subscriptionsRetry;
+  const requestId = ++subscriptionsLoadId;
+  const session = getSession();
+  if (!session) { loadProfile(); return; }
+  subscriptionsRetry.disabled = true;
+  subscriptionsRetry.hidden = true;
+  subscriptionsList.replaceChildren();
+  subscriptionsStatus.textContent = 'Loading subscriptions…';
+  try {
+    const [rows, resources] = await Promise.all([
+      getSubscriptions('userId', session.user.id), getResources()
+    ]);
+    if (requestId !== subscriptionsLoadId || getSession()?.accessToken !== session.accessToken) return;
+    const ids = [...new Set(rows.map(row => row.resourceId))];
+    let missing = 0;
+    for (const id of ids) {
+      const resource = resources.find(item => item.id === id);
+      if (!resource) { missing++; continue; }
+      const row = createRow(resource);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'btn btn-outline-primary';
+      button.textContent = 'Unsubscribe';
+      button.setAttribute('aria-label', `Unsubscribe from ${resource.name}`);
+      button.addEventListener('click', async () => {
+        if (button.disabled) return;
+        button.disabled = true;
+        try {
+          await setSubscription(id, session.user.id, false);
+          await loadSubscriptions();
+          subscriptionsStatus.focus();
+        } catch (error) {
+          if (error.status === 401) { loadProfile(); return; }
+          subscriptionsStatus.textContent = 'Could not confirm unsubscribe. Reload subscriptions before trying again.';
+          subscriptionsRetry.hidden = false;
+          subscriptionsRetry.focus();
+        }
+      });
+      row.append(button);
+      subscriptionsList.append(row);
+    }
+    subscriptionsStatus.textContent = ids.length
+      ? `${ids.length - missing} subscribed ${ids.length - missing === 1 ? 'resource' : 'resources'}.${missing ? ` ${missing} unavailable resources were skipped.` : ''}`
+      : 'No subscriptions yet. Explore resources to subscribe.';
+    if (restoreFocus) subscriptionsStatus.focus();
+  } catch {
+    if (requestId !== subscriptionsLoadId) return;
+    subscriptionsStatus.textContent = 'Could not load subscriptions. Please retry.';
+    subscriptionsRetry.hidden = false;
+  } finally {
+    if (requestId === subscriptionsLoadId) subscriptionsRetry.disabled = false;
+  }
+}
+subscriptionsRetry.addEventListener('click', loadSubscriptions);
 
 function createRow(resource) {
   const row = template.content.firstElementChild.cloneNode(true);
@@ -34,6 +95,7 @@ async function loadProfile() {
   document.querySelector('#profile-avatar').textContent = user.displayName.trim().split(/\s+/)
     .slice(0, 2).map(word => [...word][0] || '').join('').toUpperCase();
   main.hidden = false;
+  loadSubscriptions();
   list.replaceChildren();
   list.setAttribute('aria-busy', 'true');
   empty.hidden = true;

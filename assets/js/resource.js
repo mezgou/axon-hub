@@ -1,5 +1,5 @@
 import { getResource } from './services/resources.js';
-import { getStars, addStar, removeStar } from './services/social.js';
+import { getStars, addStar, removeStar, getSubscriptions, setSubscription } from './services/social.js';
 import { getSession } from './session.js';
 
 const content = document.querySelector('#resource-content');
@@ -43,7 +43,7 @@ async function loadStars() {
 
 starRetry.addEventListener('click', loadStars);
 window.addEventListener('pageshow', event => {
-  if (event.persisted && !content.hidden && validId) loadStars();
+  if (event.persisted && !content.hidden && validId) { loadStars(); loadSubscription(); }
 });
 starButton.addEventListener('click', async () => {
   if (starButton.disabled) return;
@@ -75,6 +75,65 @@ starButton.addEventListener('click', async () => {
     return;
   } finally {
     starButton.disabled = !starRetry.hidden;
+  }
+});
+const subscriptionButton = document.querySelector('#subscribe-resource');
+const subscriptionStatus = document.querySelector('#subscription-status');
+const subscriptionRetry = document.querySelector('#retry-subscriptions');
+const subscriptionLogin = document.querySelector('#subscription-login');
+let subscriptions = [];
+
+function renderSubscription() {
+  const userId = getSession()?.user.id;
+  subscriptionButton.setAttribute('aria-pressed', String(subscriptions.some(row => row.userId === userId)));
+  subscriptionLogin.hidden = Boolean(userId);
+  subscriptionLogin.href = `login.html?returnTo=${encodeURIComponent(`${pageType}.html?id=${id}`)}`;
+}
+
+async function loadSubscription() {
+  const restoreFocus = document.activeElement === subscriptionRetry;
+  subscriptionButton.disabled = true;
+  subscriptionRetry.disabled = true;
+  subscriptionStatus.textContent = 'Loading subscriptions…';
+  try {
+    subscriptions = await getSubscriptions('resourceId', id);
+    renderSubscription();
+    subscriptionStatus.textContent = '';
+    subscriptionRetry.hidden = true;
+    subscriptionButton.disabled = false;
+    if (restoreFocus) subscriptionButton.focus();
+  } catch {
+    subscriptionStatus.textContent = 'Could not load subscriptions. Please retry.';
+    subscriptionRetry.hidden = false;
+  } finally { subscriptionRetry.disabled = false; }
+}
+
+subscriptionRetry.addEventListener('click', loadSubscription);
+subscriptionButton.addEventListener('click', async () => {
+  if (subscriptionButton.disabled) return;
+  const session = getSession();
+  if (!session) {
+    renderSubscription();
+    subscriptionStatus.textContent = 'Log in to subscribe to this resource.';
+    subscriptionLogin.focus();
+    return;
+  }
+  const remove = subscriptionButton.getAttribute('aria-pressed') === 'true';
+  subscriptionButton.disabled = true;
+  subscriptionStatus.textContent = 'Saving subscription…';
+  try {
+    await setSubscription(id, session.user.id, !remove);
+    subscriptions = await getSubscriptions('resourceId', id);
+    renderSubscription();
+    subscriptionStatus.textContent = remove ? 'Unsubscribed.' : 'Subscribed.';
+  } catch (error) {
+    subscriptionStatus.textContent = error.status === 401 ? 'Your session expired. Log in to continue.'
+      : 'Could not confirm the change. Reload subscriptions before trying again.';
+    subscriptionRetry.hidden = false;
+    renderSubscription();
+    return;
+  } finally {
+    subscriptionButton.disabled = !subscriptionRetry.hidden;
   }
 });
 const validId = params.getAll('id').length <= 1 && /^[1-9]\d*$/.test(rawId)
@@ -157,6 +216,7 @@ async function loadResource() {
     status.textContent = 'Resource loaded.';
     retry.hidden = true;
     loadStars();
+    loadSubscription();
     if (restoreFocus) status.focus();
   } catch (error) {
     const missing = error.status === 404;

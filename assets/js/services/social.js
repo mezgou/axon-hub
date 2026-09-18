@@ -17,3 +17,29 @@ export function addStar(resourceId, userId) {
 export function removeStar(id) {
   return requestJson(`/stars/${id}`, { method: 'DELETE', authenticated: true });
 }
+
+export async function getSubscriptions(key, id) {
+  if (!['userId', 'resourceId'].includes(key) || !Number.isSafeInteger(id) || id <= 0) {
+    throw new Error('Invalid subscription filter.');
+  }
+  const rows = await getJson(`/subscriptions?${key}=${id}`);
+  if (!Array.isArray(rows) || !rows.every(row => row && row[key] === id
+    && ['id', 'userId', 'resourceId'].every(field => Number.isSafeInteger(row[field]) && row[field] > 0))) {
+    throw new Error('Invalid subscriptions.');
+  }
+  return rows;
+}
+
+export async function setSubscription(resourceId, userId, subscribed) {
+  const rows = await getSubscriptions('userId', userId);
+  const own = rows.filter(row => row.resourceId === resourceId);
+  if (subscribed && !own.length) {
+    await requestJson('/subscriptions', { method: 'POST', authenticated: true,
+      body: { resourceId, userId, createdAt: new Date().toISOString() } });
+  } else if (!subscribed) {
+    for (const row of own) {
+      try { await requestJson(`/subscriptions/${row.id}`, { method: 'DELETE', authenticated: true }); }
+      catch (error) { if (error.status !== 404) throw error; }
+    }
+  }
+}
