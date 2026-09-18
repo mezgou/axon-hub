@@ -67,3 +67,17 @@ server with Ctrl+C, then explicitly run:
 ```sh
 npm --prefix mock run reset
 ```
+
+## API tests
+
+With the mock dependencies installed, run:
+
+```sh
+npm --prefix mock test
+```
+
+Tests use Node's built-in test runner and start their own server on loopback port
+3002, which must be free. They create and remove a temporary database and verify
+that `mock/db.json` stays unchanged. No running API or frontend server is needed.
+The server accepts `AXON_DB_PATH` and `AXON_PORT` overrides for isolated testing;
+normal startup still uses `mock/db.json` and port 3001.

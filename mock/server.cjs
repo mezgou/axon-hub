@@ -5,7 +5,12 @@ const auth = require('json-server-auth');
 const cors = require('cors');
 const access = require('./access.cjs');
 
-const databasePath = path.join(__dirname, 'db.json');
+const databasePath = process.env.AXON_DB_PATH
+  ? path.resolve(process.env.AXON_DB_PATH) : path.join(__dirname, 'db.json');
+const port = Number(process.env.AXON_PORT ?? 3001);
+if (!Number.isInteger(port) || port < 1 || port > 65535) {
+  throw new Error('AXON_PORT must be an integer between 1 and 65535.');
+}
 try {
   copyFileSync(path.join(__dirname, 'seed.json'), databasePath, constants.COPYFILE_EXCL);
 } catch (error) {
@@ -26,8 +31,8 @@ app.use((error, request, response, next) => {
   response.status(error.status === 400 ? 400 : 500).json({ message: 'Request could not be processed.' });
 });
 
-const server = app.listen(3001, '127.0.0.1', () => {
-  console.log('AxonHub mock: http://127.0.0.1:3001/resources');
+const server = app.listen(port, '127.0.0.1', () => {
+  console.log(`AxonHub mock: http://127.0.0.1:${port}/resources`);
 });
 server.on('error', (error) => {
   console.error(`Mock server failed: ${error.message}`);
