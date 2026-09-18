@@ -107,6 +107,29 @@ module.exports = function access(request, response, next) {
     return response.status(403).json({ message: 'Endpoint is not available.' });
   }
   const resourcePath = /^\/resources(?:\/([1-9]\d*))?$/.exec(request.path);
+  if (request.path === '/resources' && request.method === 'POST') {
+    const body = request.body;
+    const copied = ['type', 'summary', 'description', 'task', 'framework', 'license', 'sizeBytes',
+      'tags', 'metrics', 'usageExample', 'demoFile', 'revision', 'reproducibility'];
+    const allowed = [...copied, 'name', 'userId', 'authorName', 'sourceResourceId', 'downloadCount'];
+    if (new URL(request.originalUrl, 'http://127.0.0.1').search || !body
+      || !Object.keys(body).every(key => allowed.includes(key))
+      || !Number.isSafeInteger(body.userId) || body.userId <= 0
+      || !Number.isSafeInteger(body.sourceResourceId) || body.sourceResourceId <= 0
+      || typeof body.authorName !== 'string' || !body.authorName.trim() || body.authorName.trim().length > 60
+      || body.downloadCount !== 0) {
+      return response.status(400).json({ message: 'Invalid fork details.' });
+    }
+    const source = request.app.db.get('resources').find({ id: body.sourceResourceId }).value();
+    if (!source) return response.status(404).json({ message: 'Source resource not found.' });
+    // This endpoint only copies existing metadata; arbitrary resource editing is not enabled.
+    if (body.name !== `${source.name.slice(0, 73)} (fork)`
+      || !copied.every(key => JSON.stringify(body[key]) === JSON.stringify(source[key]))) {
+      return response.status(400).json({ message: 'Fork metadata must match the source.' });
+    }
+    body.authorName = body.authorName.trim();
+    return next();
+  }
   if (request.method !== 'GET' || !resourcePath
     || (resourcePath[1] && !isPositiveId(resourcePath[1]))) {
     return response.status(403).json({ message: 'Endpoint is not available.' });

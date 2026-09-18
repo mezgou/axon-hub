@@ -1,4 +1,19 @@
-import { getJson } from './http.js';
+import { getJson, requestJson } from './http.js';
+
+export async function forkResource(source, user) {
+  const existing = (await getResources(user.id)).find(resource => resource.sourceResourceId === source.id);
+  if (existing) return existing;
+  const fields = ['type', 'summary', 'description', 'task', 'framework', 'license', 'sizeBytes',
+    'tags', 'metrics', 'usageExample', 'demoFile', 'revision', 'reproducibility'];
+  const body = Object.fromEntries(fields.map(key => [key, source[key]]));
+  Object.assign(body, { name: `${source.name.slice(0, 73)} (fork)`, userId: user.id,
+    authorName: user.displayName, sourceResourceId: source.id, downloadCount: 0 });
+  const created = await requestJson('/resources', { method: 'POST', authenticated: true, body });
+  if (!Number.isSafeInteger(created?.id) || created.id <= 0 || created.type !== source.type) {
+    throw new Error('Invalid fork response.');
+  }
+  return created;
+}
 
 export async function getResource(id) {
   if (!Number.isSafeInteger(id) || id <= 0) throw new Error('Invalid resource ID.');

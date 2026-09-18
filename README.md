@@ -29,7 +29,10 @@ an error and a Retry button.
 
 Resource lists accept `userId` and `sourceResourceId` as positive integer
 filters. Account endpoints `/login` and `/register` accept POST; direct user
-collection access and resource writes remain blocked.
+collection access remains blocked. Authenticated `POST /resources` creates a
+metadata fork with the current user as owner and a link to its source. Other
+resource writes remain blocked. Fork metadata copies no files or social records;
+the copy appears in Your library, and repeating the action opens your existing fork.
 Stars support public `GET /stars?resourceId=1`, authenticated `POST /stars`,
 and owner-only `DELETE /stars/:id`. Counts use distinct users.
 Subscriptions support `GET /subscriptions?userId=1` or `?resourceId=1`,
