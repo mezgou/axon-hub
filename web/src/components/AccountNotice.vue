@@ -1,22 +1,31 @@
 <script setup>
 import { nextTick, ref, watch } from 'vue';
 import { accountNotice, dismissAccountNotice } from '../composables/useSession.js';
-const remaining = ref(3);
+
+const duration = 2000;
+const remaining = ref(duration / 1000);
 const version = ref(0);
+
 watch(
   accountNotice,
   (notice, previous, onCleanup) => {
     version.value++;
-    remaining.value = 3;
+    remaining.value = duration / 1000;
     if (!notice || notice.tone === 'error') return;
+
     const started = Date.now();
     const countdown = setInterval(() => {
-      remaining.value = Math.max(1, Math.ceil((3000 - (Date.now() - started)) / 1000));
-    }, 1000);
+      remaining.value = Math.max(
+        0,
+        Math.ceil((duration - (Date.now() - started)) / 100) / 10,
+      );
+    }, 100);
+
     const timeout = setTimeout(() => {
       // Automatic dismissal must not move focus away from the user's current field.
       if (accountNotice.value === notice) dismissAccountNotice();
-    }, 3000);
+    }, duration);
+
     onCleanup(() => {
       clearInterval(countdown);
       clearTimeout(timeout);
@@ -24,6 +33,7 @@ watch(
   },
   { immediate: true },
 );
+
 async function dismiss() {
   dismissAccountNotice();
   await nextTick();
