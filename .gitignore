@@ -8,3 +8,7 @@ AGENTS.md
 # Local mock runtime
 /mock/node_modules/
 /mock/db.json
+
+# Vue workspace
+/web/node_modules/
+/web/dist/

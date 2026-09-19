@@ -81,3 +81,30 @@ Tests use Node's built-in test runner and start their own server on loopback por
 that `mock/db.json` stays unchanged. No running API or frontend server is needed.
 The server accepts `AXON_DB_PATH` and `AXON_PORT` overrides for isolated testing;
 normal startup still uses `mock/db.json` and port 3001.
+
+## Vue resource previews
+
+The separate `web/` app uses Vue and Vite with local sample data. It currently
+supports read-only resource previews, search and type filtering. The complete
+HTML/API application above continues to run independently.
+
+Use Node.js 22.18+ within the 22.x line, or Node.js 24.12+ (the tested runtime is
+24.19.0). From the repository root:
+
+```sh
+npm --prefix web ci
+npm --prefix web run dev
+```
+
+Open the local URL printed by Vite (normally http://localhost:5173). This app
+does not require the mock API. Stop the server with Ctrl+C.
+
+```sh
+npm --prefix web run build
+npm --prefix web run preview
+```
+
+The build writes `web/dist/`; preview serves it on port 4173 by default.
+`npm ci` restores the locked dependencies. Use `npm install` when deliberately
+changing dependencies and commit both `package.json` and `package-lock.json`.
+Do not commit `node_modules/` or `dist/`.
