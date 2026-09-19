@@ -1,16 +1,27 @@
 <script setup>
-import { useRoute } from 'vue-router';
+import { useId } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { session } from '../composables/useSession.js';
 import { useResourceActions } from '../composables/useResourceActions.js';
 import Icon from './Icon.vue';
 const props = defineProps({ resourceId: { type: Number, required: true } });
 const emit = defineEmits(['changed']);
 const route = useRoute();
+const router = useRouter();
+const countId = useId();
 const { state, starred, subscribed, count, refresh, toggleStar, toggleSubscription } =
   useResourceActions(() => props.resourceId);
+function signIn() {
+  return router.push({ path: '/login', query: { returnTo: route.fullPath } });
+}
+function star() {
+  if (!session.value) return signIn();
+  return toggleStar();
+}
 async function subscribe() {
+  if (!session.value) return signIn();
   await toggleSubscription();
-  emit('changed');
+  if (!state.value.error) emit('changed');
 }
 </script>
 <template>
@@ -18,40 +29,49 @@ async function subscribe() {
     <div class="axon-action-buttons">
       <button
         type="button"
-        class="btn btn-outline-primary"
+        class="btn btn-outline-primary axon-social-button axon-star-button"
         aria-label="Star"
-        :aria-pressed="starred"
-        :disabled="!session || !state.loaded || state.starPending || state.loading"
-        @click="toggleStar"
+        :aria-describedby="countId"
+        :title="!session ? 'Log in to star' : starred ? 'Remove star' : 'Star resource'"
+        :aria-pressed="session ? starred : undefined"
+        :disabled="!!session && (!state.loaded || state.starPending || state.loading)"
+        @click="star"
       >
         <Icon
           :name="starred ? 'star-fill' : 'star'"
           :class="{ 'axon-star-selected': starred }"
-        />Star
+        /><span class="axon-action-count" aria-hidden="true">{{ state.loaded ? count : '—' }}</span>
       </button>
-      <span>Stars: {{ count }}</span>
+      <span :id="countId" class="visually-hidden">{{
+        state.loaded ? `${count} stars` : 'Star count unavailable'
+      }}</span>
       <button
         type="button"
-        class="btn btn-outline-primary"
+        class="btn btn-outline-primary axon-social-button axon-subscribe-button"
         aria-label="Subscribe"
-        :aria-pressed="subscribed"
-        :disabled="!session || !state.loaded || state.subscriptionPending || state.loading"
+        :title="
+          !session ? 'Log in to subscribe' : subscribed ? 'Unsubscribe' : 'Subscribe to resource'
+        "
+        :aria-pressed="session ? subscribed : undefined"
+        :disabled="!!session && (!state.loaded || state.subscriptionPending || state.loading)"
         @click="subscribe"
       >
-        <Icon name="bell" />{{ subscribed ? 'Subscribed' : 'Subscribe' }}
+        <Icon name="bell" /><span
+          v-if="subscribed"
+          class="axon-subscription-check"
+          aria-hidden="true"
+          >✓</span
+        >
       </button>
     </div>
-    <p v-if="!session" class="small">
-      <RouterLink :to="{ path: '/login', query: { returnTo: route.fullPath } }"
-        >Log in to star or subscribe</RouterLink
-      >
-    </p>
     <p v-if="state.error" role="alert">
       {{ state.error }}
       <button class="btn btn-outline-primary" :disabled="state.loading" @click="refresh">
         Reload actions
       </button>
     </p>
-    <p class="small" role="status">{{ state.loading ? 'Loading actions…' : state.message }}</p>
+    <p class="visually-hidden" role="status" aria-atomic="true">
+      {{ state.message }}
+    </p>
   </div>
 </template>

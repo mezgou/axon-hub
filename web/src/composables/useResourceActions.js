@@ -94,7 +94,15 @@ export function useResourceActions(resourceId) {
         await setSubscription(id, user.id, !own.some((row) => row.resourceId === id));
       }
       await refresh(target, id);
-      target.message = target.error ? '' : 'Saved.';
+      target.message = target.error
+        ? ''
+        : kind === 'star'
+          ? target.stars.some((row) => row.userId === user.id)
+            ? 'Star added.'
+            : 'Star removed.'
+          : target.subscriptions.some((row) => row.userId === user.id)
+            ? 'Subscribed.'
+            : 'Unsubscribed.';
     } catch (error) {
       target.error = error.message + ' Reload the actions before trying again.';
       target.loaded = false;

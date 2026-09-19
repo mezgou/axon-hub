@@ -64,7 +64,8 @@ async function remove(id) {
     <h2 id="discussion-heading" ref="heading" tabindex="-1">
       <Icon name="chat-left-text" /> Discussion
     </h2>
-    <p role="status">{{ loading ? 'Loading comments…' : announcement }}</p>
+    <p v-if="loading" role="status">Loading comments…</p>
+    <p class="visually-hidden" role="status" aria-atomic="true">{{ announcement }}</p>
     <div v-if="error" role="alert">
       {{ error.message }}
       <button class="btn btn-outline-primary" @click="reload">Retry comments</button>

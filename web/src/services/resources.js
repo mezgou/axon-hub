@@ -1,4 +1,5 @@
 import { getJson, requestJson } from './http.js';
+import { getStars } from './social.js';
 
 export async function forkResource(source, user) {
   const existing = (await getResources(user.id)).find(
@@ -100,4 +101,16 @@ export async function getResources(userId) {
     throw new Error('Invalid resource list.');
   }
   return resources;
+}
+
+export async function getRankedResources() {
+  const resources = await getResources();
+  const ranked = await Promise.all(
+    resources.map(async (resource) => {
+      const stars = await getStars(resource.id);
+      return { ...resource, starCount: new Set(stars.map((star) => star.userId)).size };
+    }),
+  );
+  // Take one ranking snapshot per visit; clicking a star must not move the focused card.
+  return ranked.sort((a, b) => b.starCount - a.starCount || a.id - b.id);
 }

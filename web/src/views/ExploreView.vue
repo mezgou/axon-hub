@@ -2,14 +2,14 @@
 import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useLoad } from '../composables/useLoad.js';
-import { getResources } from '../services/resources.js';
+import { getRankedResources } from '../services/resources.js';
 import { matchesResource, readFilters } from '../services/filters.js';
 import ResourceFilters from '../components/ResourceFilters.vue';
 import ResourceRow from '../components/ResourceRow.vue';
 import Icon from '../components/Icon.vue';
 const route = useRoute();
 const router = useRouter();
-const { data, loading, error, reload } = useLoad(() => getResources());
+const { data, loading, error, reload } = useLoad(() => getRankedResources());
 const filters = computed(() => readFilters(route.query));
 const visible = computed(() =>
   (data.value || []).filter((resource) => matchesResource(resource, filters.value)),
@@ -36,7 +36,9 @@ function apply(filters) {
   <ResourceFilters :filters="filters" @apply="apply" />
   <section id="resource-results" aria-labelledby="results-heading" :aria-busy="loading">
     <div class="axon-results-heading">
-      <h2 id="results-heading">Explore resources</h2>
+      <h2 id="results-heading">
+        Explore resources <span class="axon-sort-label">Most starred</span>
+      </h2>
       <p role="status">
         {{
           loading

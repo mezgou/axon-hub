@@ -39,14 +39,11 @@ a:hover {
 .axon-explore-intro {
   margin-bottom: 28px;
 }
-.axon-filter-form {
-  margin-bottom: 28px;
-}
 .axon-filter-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 16px;
-  padding-top: 16px;
+  padding: 20px 4px 4px;
 }
 .axon-row-metadata {
   display: flex;
@@ -71,14 +68,11 @@ a:hover {
 .axon-resource-title h3 {
   margin-top: 4px;
 }
-.axon-actions {
-  margin-top: 16px;
-}
 .axon-action-buttons {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
 }
 .axon-star-selected {
   color: var(--axon-star);
@@ -181,5 +175,219 @@ a:hover {
   }
   .axon-library-mark {
     display: none;
+  }
+}
+
+/* Keep identity and resource actions quiet, with full keyboard hit targets. */
+.axon-account-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 44px;
+  color: var(--axon-text);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.axon-account-name {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.axon-account-nav .axon-logout {
+  border-color: transparent;
+}
+.axon-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px;
+  margin-block: 24px 32px;
+  background: var(--axon-surface);
+  border: 1px solid var(--axon-border);
+  border-radius: 12px;
+}
+.axon-profile-info {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.axon-profile-info h2 {
+  margin: 0 0 8px;
+  color: var(--axon-muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+.axon-profile-name {
+  margin: 0 0 4px;
+  font-size: 1.125rem;
+  font-weight: 650;
+}
+.axon-profile-email {
+  margin: 0;
+  color: var(--axon-muted);
+  font-size: 0.875rem;
+}
+.axon-profile-section > h2 {
+  margin-bottom: 16px;
+}
+.axon-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  margin-top: 12px;
+}
+.axon-social-button {
+  min-height: 40px;
+  min-width: 44px;
+  padding: 8px 12px;
+  border-color: var(--axon-border-hover);
+  font-size: 0.8125rem;
+}
+.axon-action-count {
+  min-width: 1ch;
+  font-variant-numeric: tabular-nums;
+}
+.axon-subscribe-button {
+  position: relative;
+}
+.axon-subscription-check {
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.axon-actions > [role='alert'] {
+  flex-basis: 100%;
+  margin: 4px 0 0;
+  color: var(--axon-error);
+}
+.axon-sort-label {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--axon-muted);
+}
+.axon-filter-form {
+  margin-bottom: 28px;
+  padding: 20px;
+  background: var(--axon-surface);
+  border: 1px solid var(--axon-border);
+  border-radius: 12px;
+}
+.axon-filter-form .axon-search {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.axon-filter-collapse {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition:
+    grid-template-rows 180ms ease,
+    visibility 0s linear 180ms;
+}
+.axon-filter-collapse.is-open {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.axon-filter-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+.axon-chevron {
+  width: 7px;
+  height: 7px;
+  margin-left: 4px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 180ms ease;
+}
+.axon-filter-toggle[aria-expanded='true'] .axon-chevron {
+  transform: rotate(225deg) translate(-1px, -1px);
+}
+@media (max-width: 575.98px) {
+  .axon-header-row {
+    gap: 8px;
+  }
+  .axon-account-nav {
+    gap: 4px;
+  }
+  .axon-account-name {
+    max-width: 72px;
+  }
+  .axon-account-link {
+    gap: 6px;
+  }
+  .axon-account-nav .axon-logout {
+    padding-inline: 8px;
+  }
+  .axon-profile-card {
+    padding: 18px;
+    gap: 12px;
+  }
+  .axon-filter-form {
+    padding: 16px;
+  }
+  .axon-search {
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .axon-filter-collapse,
+  .axon-chevron {
+    transition: none;
+  }
+}
+
+.axon-resource-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+.axon-resource-footer .axon-row-metadata,
+.axon-resource-footer .axon-actions {
+  margin: 0;
+}
+.axon-resource-footer .axon-actions {
+  margin-left: auto;
+}
+@media (max-width: 575.98px) {
+  .axon-resource-footer .axon-actions {
+    margin-left: 0;
+  }
+}
+@media (max-width: 359.98px) {
+  .axon-brand {
+    gap: 6px;
+    font-size: 1.1rem;
+  }
+  .axon-logo {
+    width: 28px;
+    height: 28px;
+  }
+  .axon-account-name {
+    max-width: 48px;
+  }
+  .axon-account-link,
+  .axon-account-nav .axon-logout {
+    font-size: 0.75rem;
+  }
+  .axon-account-nav .axon-logout {
+    padding-inline: 6px;
+  }
+  .axon-account-link .axon-avatar {
+    width: 28px;
+    height: 28px;
   }
 }

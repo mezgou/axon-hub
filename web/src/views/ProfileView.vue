@@ -5,6 +5,7 @@ import { useLoad } from '../composables/useLoad.js';
 import { getResources } from '../services/resources.js';
 import { getSubscriptions } from '../services/social.js';
 import ResourceRow from '../components/ResourceRow.vue';
+import UserAvatar from '../components/UserAvatar.vue';
 const subscriptionHeading = ref(null);
 async function refreshSubscriptions() {
   await subscriptions.reload();
@@ -25,9 +26,17 @@ const subscriptions = useLoad(async () => {
 </script>
 <template>
   <h1 tabindex="-1">Your library</h1>
-  <p>{{ user?.displayName }}</p>
-  <p>{{ user?.email }}</p>
-  <section aria-labelledby="own-heading">
+  <section class="axon-profile-card" aria-labelledby="profile-heading">
+    <UserAvatar :name="user?.displayName" />
+    <div class="axon-profile-info">
+      <h2 id="profile-heading">Your profile</h2>
+      <p class="axon-profile-name">{{ user?.displayName }}</p>
+      <p class="axon-profile-email">
+        <span class="visually-hidden">Email: </span>{{ user?.email }}
+      </p>
+    </div>
+  </section>
+  <section class="axon-profile-section" aria-labelledby="own-heading">
     <h2 id="own-heading">Your resources</h2>
     <p v-if="own.loading.value" role="status">Loading resources…</p>
     <div v-else-if="own.error.value" role="alert">
@@ -44,7 +53,7 @@ const subscriptions = useLoad(async () => {
     </ul>
     <p v-else>You have no resources yet. Open a resource and fork its metadata to get started.</p>
   </section>
-  <section aria-labelledby="subscriptions-heading">
+  <section class="axon-profile-section" aria-labelledby="subscriptions-heading">
     <h2 id="subscriptions-heading" ref="subscriptionHeading" tabindex="-1">Subscriptions</h2>
     <p v-if="subscriptions.loading.value" role="status">Loading subscriptions…</p>
     <div v-else-if="subscriptions.error.value" role="alert">

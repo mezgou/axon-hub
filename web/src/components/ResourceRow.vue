@@ -25,16 +25,18 @@ defineEmits(['changed']);
       </div>
     </div>
     <p>{{ resource.summary }}</p>
-    <dl class="axon-row-metadata">
-      <div v-for="key in ['task', 'framework', 'license']" :key="key">
-        <dt class="text-capitalize">{{ key }}</dt>
-        <dd>{{ displayLabel(key, resource[key]) }}</dd>
-      </div>
-      <div>
-        <dt>Size</dt>
-        <dd>{{ displaySize(resource.sizeBytes) }}</dd>
-      </div>
-    </dl>
-    <ResourceActions :resource-id="resource.id" @changed="$emit('changed')" />
+    <div class="axon-resource-footer">
+      <dl class="axon-row-metadata">
+        <div v-for="key in ['task', 'framework', 'license']" :key="key">
+          <dt>{{ key[0].toUpperCase() + key.slice(1) }}</dt>
+          <dd>{{ displayLabel(key, resource[key]) }}</dd>
+        </div>
+        <div>
+          <dt>Size</dt>
+          <dd>{{ displaySize(resource.sizeBytes) }}</dd>
+        </div>
+      </dl>
+      <ResourceActions :resource-id="resource.id" @changed="$emit('changed')" />
+    </div>
   </li>
 </template>

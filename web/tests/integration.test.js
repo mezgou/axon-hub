@@ -11,6 +11,7 @@ import { login } from '../src/services/auth.js';
 import { getResource, forkResource } from '../src/services/resources.js';
 import { getComments, editComment, deleteComment, postComment } from '../src/services/social.js';
 import AuthForm from '../src/components/AuthForm.vue';
+import AppHeader from '../src/components/AppHeader.vue';
 import ResourceActions from '../src/components/ResourceActions.vue';
 import ProfileView from '../src/views/ProfileView.vue';
 import DiscussionList from '../src/components/DiscussionList.vue';
@@ -73,6 +74,11 @@ it('runs registration, login, relations, profile, comment CRUD and fork against 
   clearSession();
   saveSession(await login('vue-test@example.test', 'demo-pass-123'));
   const user = session.value.user;
+  const header = mount(AppHeader, { global: { plugins: [router] } });
+  expect(header.get('.axon-account-link').text()).toContain('Vue Test');
+  expect(header.get('.axon-avatar').text()).toBe('VT');
+  expect(header.text()).not.toContain('Signed in');
+  header.unmount();
   const actions = mount(ResourceActions, {
     props: { resourceId: 1 },
     global: { plugins: [router] },
@@ -86,6 +92,10 @@ it('runs registration, login, relations, profile, comment CRUD and fork against 
   await settleUntil(
     () => actions.get('button[aria-label="Subscribe"]').attributes('aria-pressed') === 'true',
   );
+  expect(actions.get('.axon-star-button').text()).not.toContain('Star');
+  expect(actions.get('.axon-action-count').text()).toBe('1');
+  expect(actions.get('[role="status"]').classes()).toContain('visually-hidden');
+  expect(actions.get('.axon-subscription-check').text()).toBe('✓');
   const second = mount(ResourceActions, {
     props: { resourceId: 1 },
     global: { plugins: [router] },
@@ -101,6 +111,8 @@ it('runs registration, login, relations, profile, comment CRUD and fork against 
       profile.text().includes('Sentiment Mini (fork)') && profile.text().includes('Sentiment Mini'),
   );
   expect(profile.findAll('li.axon-resource-row')).toHaveLength(2);
+  expect(profile.get('.axon-profile-card').text()).toContain('Your profile');
+  expect(profile.get('.axon-profile-email').text()).toContain('vue-test@example.test');
   const comment = await postComment(1, user, '<script>test</script>');
   expect((await getComments(1)).find((row) => row.id === comment.id).body).toBe(
     '<script>test</script>',

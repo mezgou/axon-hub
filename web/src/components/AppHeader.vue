@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import Icon from './Icon.vue';
+import UserAvatar from './UserAvatar.vue';
 import { useSession } from '../composables/useSession.js';
 import { useTheme } from '../composables/useTheme.js';
 const { session, clearSession } = useSession();
@@ -32,10 +33,13 @@ function logout() {
         </button>
       </div>
       <div class="axon-account-nav">
-        <template v-if="session"
-          ><span class="small">Signed in</span
-          ><button class="btn btn-outline-primary" @click="logout">Log out</button></template
-        >
+        <template v-if="session">
+          <RouterLink class="axon-account-link" to="/profile" :title="session.user.displayName">
+            <UserAvatar :name="session.user.displayName" small />
+            <span class="axon-account-name">{{ session.user.displayName }}</span>
+          </RouterLink>
+          <button class="btn btn-outline-primary axon-logout" @click="logout">Log out</button>
+        </template>
         <template v-else
           ><RouterLink class="axon-nav-link" to="/login">Log in</RouterLink
           ><RouterLink class="btn btn-primary" to="/register">Sign up</RouterLink></template
