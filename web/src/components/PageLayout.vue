@@ -1,13 +1,19 @@
+<script setup>
+import AppHeader from './AppHeader.vue';
+function skipToMain() {
+  document.querySelector('#main-content')?.focus();
+}
+</script>
 <template>
-  <a class="axon-skip-link" href="#main-content">Skip to main content</a>
-  <header class="axon-header">
-    <div class="axon-container axon-header-row">
-      <span class="axon-brand">AxonHub</span>
-      <span class="axon-current-page">Explore</span>
-    </div>
-  </header>
-  <main id="main-content" class="axon-container axon-main" tabindex="-1">
+  <a class="axon-skip-link" href="#main-content" @click.prevent="skipToMain"
+    >Skip to main content</a
+  >
+  <AppHeader />
+  <main id="main-content" class="container-fluid axon-container axon-main" tabindex="-1">
     <slot />
   </main>
-  <footer class="axon-container axon-footer">AxonHub / Models, datasets &amp; ideas.</footer>
+  <footer class="container-fluid axon-container axon-footer">
+    <p>AxonHub / Models, datasets &amp; ideas.</p>
+    <p>Learning preview · Sample resources only</p>
+  </footer>
 </template>

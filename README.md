@@ -1,5 +1,9 @@
 # axon-hub
 
+The Vue SPA is the main migration target; see [Vue application](#vue-application)
+for its launch commands. The original HTML version is retained until the final
+browser accessibility checks are complete.
+
 ## Local resource API
 
 With Node.js and npm installed, run from the repository root:
@@ -82,29 +86,70 @@ that `mock/db.json` stays unchanged. No running API or frontend server is needed
 The server accepts `AXON_DB_PATH` and `AXON_PORT` overrides for isolated testing;
 normal startup still uses `mock/db.json` and port 3001.
 
-## Vue resource previews
+## Vue application
 
-The separate `web/` app uses Vue and Vite with local sample data. It currently
-supports read-only resource previews, search and type filtering. The complete
-HTML/API application above continues to run independently.
-
-Use Node.js 22.18+ within the 22.x line, or Node.js 24.12+ (the tested runtime is
-24.19.0). From the repository root:
+Requires Node.js 22.18+ in the 22.x line, or 24.12+. Tested with Node.js 24.19.0.
+From the repository root, install the locked dependencies:
 
 ```sh
+npm --prefix mock ci
 npm --prefix web ci
+```
+
+Start the API in one terminal:
+
+```sh
+npm --prefix mock start
+```
+
+Start Vue in a second terminal:
+
+```sh
 npm --prefix web run dev
 ```
 
-Open the local URL printed by Vite (normally http://localhost:5173). This app
-does not require the mock API. Stop the server with Ctrl+C.
+Open http://127.0.0.1:5173/#/explore. Keep both terminals running; stop with Ctrl+C.
+Vite proxies `/api` to the local mock on port 3001. No API keys or CORS changes
+are needed. The fixed loopback host avoids localhost resolution differences.
+
+The SPA includes search by name/description/tags, all resource filters, details,
+registration/login, your library, stars, subscriptions, comment editing/deletion,
+metadata forks, theme switching and the shared icon sprite. Guest actions link
+to login with a validated return path. Sessions use sessionStorage; blocked
+storage falls back to memory. Theme preference uses localStorage.
+
+Routes: `#/explore`, `#/resources/:id`, `#/login`, `#/register`, `#/profile`.
+Hash navigation supports direct links and refresh without server rewrites.
+The original HTML version remains on port 8080 for the final comparison; it does
+not share its browser session with the SPA on a different port.
+
+For a production-build preview, keep the API running and use:
 
 ```sh
 npm --prefix web run build
 npm --prefix web run preview
 ```
 
-The build writes `web/dist/`; preview serves it on port 4173 by default.
-`npm ci` restores the locked dependencies. Use `npm install` when deliberately
-changing dependencies and commit both `package.json` and `package-lock.json`.
-Do not commit `node_modules/` or `dist/`.
+Open http://127.0.0.1:4173/#/explore. Preview also proxies the API. A separate
+static hosting service would need an equivalent `/api` reverse proxy. The local
+mock is an educational backend, not a production authentication service.
+
+```sh
+npm --prefix web test
+npm --prefix mock test
+```
+
+Frontend tests cover filter boundaries, session errors, duplicate action guards,
+comment drafts, and component/API integration. Integration tests use a disposable
+database on port 3004; mock tests use port 3002. The working `mock/db.json` is not
+modified by either suite.
+
+Code organization: `web/src/views` holds route pages; `components` contains shared
+UI; `composables` contains reactive session, loading, actions and theme logic;
+`services` contains Axios requests and filtering; `web/public` holds theme bootstrap,
+the SVG sprite, demo manifest and licenses. UI strings and code are English.
+
+`npm ci` restores the lockfile; use `npm install` only when deliberately changing
+dependencies. Commit package.json and package-lock.json together. Do not commit
+node_modules or dist. Complete the Firefox Accessibility Inspector and Lighthouse
+checks before removing the original HTML implementation.

@@ -1,26 +1,40 @@
 <script setup>
-import { computed } from 'vue';
-
-const props = defineProps({ resource: { type: Object, required: true } });
-const typeLabel = computed(() => props.resource.type === 'dataset' ? 'Dataset' : 'Model');
-const sizeLabel = computed(() => {
-  const bytes = props.resource.sizeBytes;
-  return bytes >= 1024 ** 3
-    ? `${Number((bytes / 1024 ** 3).toFixed(2))} GiB`
-    : `${Number((bytes / 1024 ** 2).toFixed(2))} MiB`;
-});
+import Icon from './Icon.vue';
+import ResourceActions from './ResourceActions.vue';
+import { displayLabel, displaySize } from '../services/filters.js';
+defineProps({ resource: { type: Object, required: true } });
+defineEmits(['changed']);
 </script>
-
 <template>
   <li class="axon-resource-row">
-    <span class="axon-resource-type" :class="{ 'axon-resource-type--dataset': resource.type === 'dataset' }">{{ typeLabel }}</span>
-    <h3>{{ resource.name }}</h3>
+    <div class="axon-resource-title">
+      <span
+        class="axon-resource-tile"
+        :class="{ 'axon-resource-tile--dataset': resource.type === 'dataset' }"
+        ><Icon :name="resource.type === 'dataset' ? 'database' : 'box'"
+      /></span>
+      <div>
+        <span
+          class="axon-resource-type"
+          :class="{ 'axon-resource-type--dataset': resource.type === 'dataset' }"
+          >{{ resource.type === 'dataset' ? 'Dataset' : 'Model' }}</span
+        >
+        <h3>
+          <RouterLink :to="`/resources/${resource.id}`">{{ resource.name }}</RouterLink>
+        </h3>
+      </div>
+    </div>
     <p>{{ resource.summary }}</p>
-    <dl class="axon-metadata">
-      <div><dt>Task</dt><dd>{{ resource.task }}</dd></div>
-      <div><dt>Framework</dt><dd>{{ resource.framework }}</dd></div>
-      <div><dt>License</dt><dd>{{ resource.license }}</dd></div>
-      <div><dt>Size</dt><dd>{{ sizeLabel }}</dd></div>
+    <dl class="axon-row-metadata">
+      <div v-for="key in ['task', 'framework', 'license']" :key="key">
+        <dt class="text-capitalize">{{ key }}</dt>
+        <dd>{{ displayLabel(key, resource[key]) }}</dd>
+      </div>
+      <div>
+        <dt>Size</dt>
+        <dd>{{ displaySize(resource.sizeBytes) }}</dd>
+      </div>
     </dl>
+    <ResourceActions :resource-id="resource.id" @changed="$emit('changed')" />
   </li>
 </template>
