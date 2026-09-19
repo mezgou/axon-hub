@@ -1,35 +1,13 @@
 # axon-hub
 
-The Vue SPA is the main migration target; see [Vue application](#vue-application)
-for its launch commands. The original HTML version is retained until the final
-browser accessibility checks are complete.
+A Vue application for exploring fictional models and datasets. See
+[Vue application](#vue-application) for installation and launch commands.
+The earlier HTML implementation is available in Git history.
 
 ## Local resource API
 
-With Node.js and npm installed, run from the repository root:
-
-```sh
-npm --prefix mock ci
-npm --prefix mock start
-```
-
-Open http://127.0.0.1:3001/resources or http://127.0.0.1:3001/resources/1.
-The API serves fictional resources on loopback only. Explore and resource detail
-pages load API data. Open details from the catalog, or use `model.html?id=1` and
-`dataset.html?id=4`. Login, registration and your profile use the local API;
-stars, resource subscriptions and comments are saved through the API. After signing in, Your library
-shows your account and public resources; a new account starts with an empty list.
-
-Keep the API running and serve the repository over HTTP in a second terminal
-(for example, with Python installed):
-
-```sh
-python -m http.server 8080 --bind 127.0.0.1
-```
-
-Open http://127.0.0.1:8080/index.html. Opening the HTML directly via `file://`
-does not support the JavaScript modules. If the API is unavailable, Explore shows
-an error and a Retry button.
+The Vue application uses the local API described below. Follow
+[Vue application](#vue-application) to install and start both processes.
 
 Resource lists accept `userId` and `sourceResourceId` as positive integer
 filters. Account endpoints `/login` and `/register` accept POST; direct user
@@ -120,8 +98,6 @@ storage falls back to memory. Theme preference uses localStorage.
 
 Routes: `#/explore`, `#/resources/:id`, `#/login`, `#/register`, `#/profile`.
 Hash navigation supports direct links and refresh without server rewrites.
-The original HTML version remains on port 8080 for the final comparison; it does
-not share its browser session with the SPA on a different port.
 
 For a production-build preview, keep the API running and use:
 
@@ -151,5 +127,4 @@ the SVG sprite, demo manifest and licenses. UI strings and code are English.
 
 `npm ci` restores the lockfile; use `npm install` only when deliberately changing
 dependencies. Commit package.json and package-lock.json together. Do not commit
-node_modules or dist. Complete the Firefox Accessibility Inspector and Lighthouse
-checks before removing the original HTML implementation.
+node_modules or dist.
