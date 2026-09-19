@@ -2,7 +2,7 @@
 .axon-back-link {
   display: inline-block;
   margin-bottom: 20px;
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .8125rem;
   text-decoration: none;
 }
@@ -17,15 +17,15 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 12px;
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .8125rem;
 }
 
 .axon-actions {
   padding: 18px 20px;
-  border: 1px solid #dfe7e1;
+  border: 1px solid var(--axon-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--axon-surface);
 }
 
 .axon-actions-heading {
@@ -44,7 +44,7 @@
 
 .axon-actions-heading p {
   margin: 0;
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .75rem;
 }
 
@@ -56,12 +56,12 @@
 }
 
 .axon-star-count {
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .8125rem;
 }
 
 .axon-actions [role="status"] {
-  color: #17654c;
+  color: var(--axon-accent);
   font-size: .8125rem;
 }
 
@@ -86,8 +86,8 @@
 .axon-detail-metadata {
   min-width: 0;
   padding: 24px;
-  background: #edf3ef;
-  border: 1px solid #d8e3db;
+  background: var(--axon-metadata);
+  border: 1px solid var(--axon-metadata-border);
   border-radius: 12px;
   overflow-wrap: anywhere;
 }
@@ -100,7 +100,7 @@
 
 .axon-detail-metadata dt {
   margin-top: 0;
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .75rem;
   font-weight: 500;
 }
@@ -114,15 +114,15 @@
 .axon-detail-content {
   min-width: 0;
   padding: 28px;
-  border: 1px solid #dfe7e1;
+  border: 1px solid var(--axon-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--axon-surface);
 }
 
 .axon-detail-content section + section {
   margin-top: 28px;
   padding-top: 28px;
-  border-top: 1px solid #e6ece8;
+  border-top: 1px solid var(--axon-section-border);
 }
 
 .axon-detail-content p, .axon-detail-content li {
@@ -134,16 +134,16 @@
 }
 
 .axon-detail-content summary {
-  color: #365346;
+  color: var(--axon-button-text);
   font-size: .875rem;
   font-weight: 600;
 }
 
 .axon-detail-content details {
   padding: 16px;
-  border: 1px solid #dfe7e1;
+  border: 1px solid var(--axon-border);
   border-radius: 8px;
-  background: #f8faf8;
+  background: var(--axon-details);
 }
 
 .axon-detail-content details dl {
@@ -166,11 +166,11 @@
   flex-direction: column;
   padding: 16px;
   border-radius: 8px;
-  background: #f0f5f2;
+  background: var(--axon-subtle);
 }
 
 .axon-metrics dt {
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .8125rem;
   font-weight: 500;
 }
@@ -187,8 +187,8 @@
   padding: 20px;
   margin-bottom: 0;
   border-radius: 8px;
-  background: #203a30;
-  color: #e7f1e9;
+  background: var(--axon-code-bg);
+  color: var(--axon-code-text);
   overflow-x: auto;
   font-size: .8125rem;
   line-height: 1.8;
@@ -198,8 +198,8 @@
   overflow-wrap: anywhere;
   padding: 16px;
   margin-top: 16px;
-  border-left: 3px solid #92b49d;
-  background: #fff;
+  border-left: 3px solid var(--axon-comment-border);
+  background: var(--axon-surface);
 }
 
 .axon-comment-body {
@@ -233,7 +233,7 @@
 
 .axon-auth-intro p {
   max-width: 390px;
-  color: #596b62;
+  color: var(--axon-muted);
 }
 
 .axon-auth-intro > img {
@@ -246,9 +246,9 @@
 .axon-auth {
   min-width: 0;
   padding: 32px;
-  border: 1px solid #dfe7e1;
+  border: 1px solid var(--axon-border);
   border-radius: 16px;
-  background: #fff;
+  background: var(--axon-surface);
 }
 
 .axon-auth .axon-page-header {
@@ -272,8 +272,8 @@
 .axon-auth-form [role="status"] {
   padding: 12px;
   border-radius: 8px;
-  background: #edf6ed;
-  color: #22513a;
+  background: var(--axon-success-bg);
+  color: var(--axon-success-text);
   font-size: .8125rem;
 }
 
@@ -282,8 +282,8 @@
 }
 
 .axon-auth-form .axon-form-failure {
-  color: #b42318;
-  background: #fff1f0;
+  color: var(--axon-error);
+  background: var(--axon-error-bg);
   border-inline-start: 3px solid currentColor;
 }
 
@@ -299,12 +299,12 @@
 
 .axon-field-error {
   margin: 6px 0 0;
-  color: #b42318;
+  color: var(--axon-error);
   font-size: .8125rem;
 }
 
 .axon-auth-form [aria-invalid="true"] {
-  border-color: #b42318;
+  border-color: var(--axon-error);
 }
 
 .axon-profile-identity {
@@ -313,9 +313,9 @@
   align-items: center;
   padding: 24px;
   margin-bottom: 28px;
-  border: 1px solid #d8e3db;
+  border: 1px solid var(--axon-metadata-border);
   border-radius: 12px;
-  background: #edf3ef;
+  background: var(--axon-metadata);
   overflow-wrap: anywhere;
 }
 
@@ -326,8 +326,8 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #cbe3d2;
-  color: #27533b;
+  background: var(--axon-avatar-bg);
+  color: var(--axon-avatar-text);
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -349,12 +349,12 @@
 }
 
 .axon-profile-section > p {
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .8125rem;
 }
 
 .axon-empty-state h3 {
-  color: #23352f;
+  color: var(--axon-text);
   font-size: 1rem;
 }
 

@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="assets/js/theme.js"></script>
     <meta name="description" content="View your AxonHub account and public resources.">
     <title>Your library · AxonHub</title>
     <link
@@ -11,6 +12,7 @@
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
     crossorigin="anonymous"
     >
+    <link href="assets/css/tokens.css" rel="stylesheet">
     <link href="assets/css/base.css" rel="stylesheet">
     <link href="assets/css/catalog.css" rel="stylesheet">
     <link href="assets/css/pages.css" rel="stylesheet">
@@ -26,6 +28,12 @@
           <a class="axon-nav-link" href="index.html">Explore</a>
           <a class="axon-nav-link" href="profile.html" aria-current="page">Your library</a>
         </nav>
+        <div class="axon-theme-controls" hidden>
+          <button id="theme-toggle" class="btn btn-outline-primary axon-theme-toggle" type="button" aria-label="Switch to dark theme" title="Switch to dark theme">
+            <svg class="axon-theme-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
+            <svg class="axon-theme-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14A9 9 0 0 1 10 3.5 9 9 0 1 0 20.5 14Z"/></svg>
+          </button>
+        </div>
         <div class="axon-account-nav">
           <a class="axon-nav-link" href="login.html">Log in</a>
           <a class="btn btn-primary" href="register.html">Sign up</a>

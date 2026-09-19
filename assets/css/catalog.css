@@ -19,9 +19,9 @@
   gap: 12px;
   padding: 20px;
   margin-bottom: 28px;
-  border: 1px solid #dfe7e1;
+  border: 1px solid var(--axon-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--axon-surface);
 }
 
 .axon-search > div {
@@ -52,9 +52,9 @@
 
 .axon-filter-panel {
   padding: 20px;
-  border: 1px solid #dfe7e1;
+  border: 1px solid var(--axon-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--axon-surface);
 }
 
 .axon-filter-panel summary {
@@ -73,7 +73,7 @@
 }
 
 .axon-filter-fields label {
-  color: #52645b;
+  color: var(--axon-label);
   font-size: .8125rem;
   font-weight: 650;
 }
@@ -103,7 +103,7 @@
 
 .axon-results-heading p {
   margin: 0;
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .8125rem;
 }
 
@@ -117,14 +117,14 @@
 
 .axon-resource-row {
   padding: 22px;
-  border: 1px solid #dfe7e1;
+  border: 1px solid var(--axon-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--axon-surface);
   overflow-wrap: anywhere;
 }
 
 .axon-resource-row:hover {
-  border-color: #9cb8a7;
+  border-color: var(--axon-border-hover);
 }
 
 .axon-resource-heading {
@@ -153,12 +153,12 @@
 }
 
 .axon-resource-title a {
-  color: #23352f;
+  color: var(--axon-text);
   text-decoration: none;
 }
 
 .axon-resource-title a:hover {
-  color: #17654c;
+  color: var(--axon-accent);
   text-decoration: underline;
 }
 
@@ -169,11 +169,11 @@
   width: 42px;
   height: 42px;
   border-radius: 10px;
-  background: #edf1ff;
+  background: var(--axon-model-bg);
 }
 
 .axon-resource-tile--dataset {
-  background: #e7f2e9;
+  background: var(--axon-dataset-bg);
 }
 
 .axon-resource-tile .axon-icon {
@@ -186,16 +186,16 @@
   align-items: center;
   padding: 2px 8px;
   border-radius: 5px;
-  background: #edf1ff;
-  color: #485585;
+  background: var(--axon-model-bg);
+  color: var(--axon-model-text);
   font-size: .75rem;
   font-weight: 650;
   line-height: 1.6;
 }
 
 .axon-resource-type--dataset {
-  background: #e7f2e9;
-  color: #356045;
+  background: var(--axon-dataset-bg);
+  color: var(--axon-dataset-text);
 }
 
 .axon-resource-stars {
@@ -203,7 +203,7 @@
   align-items: center;
   gap: 6px;
   margin-top: 10px;
-  color: #596b62;
+  color: var(--axon-muted);
   white-space: nowrap;
   font-size: .8125rem;
 }
@@ -215,7 +215,7 @@
 
 .axon-resource-row > p {
   margin: 0 0 16px;
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .875rem;
 }
 
@@ -224,7 +224,7 @@
   flex-wrap: wrap;
   gap: 8px 20px;
   margin: 0;
-  color: #596b62;
+  color: var(--axon-muted);
   font-size: .8125rem;
 }
 
@@ -244,10 +244,10 @@
 
 .axon-empty-state {
   padding: 28px;
-  border: 1px dashed #a7b9ad;
+  border: 1px dashed var(--axon-empty-border);
   border-radius: 12px;
-  background: #fff;
-  color: #596b62;
+  background: var(--axon-surface);
+  color: var(--axon-muted);
 }
 
 @media (min-width: 992px) {
