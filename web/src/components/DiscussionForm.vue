@@ -36,7 +36,7 @@ async function submit() {
 }
 </script>
 <template>
-  <form @submit.prevent="submit" :aria-busy="pending">
+  <form novalidate @submit.prevent="submit" :aria-busy="pending">
     <label class="form-label" :for="id">{{ editing ? 'Edit your comment' : 'Your comment' }}</label>
     <textarea
       :id="id"

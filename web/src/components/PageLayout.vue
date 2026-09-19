@@ -1,5 +1,6 @@
 <script setup>
 import AppHeader from './AppHeader.vue';
+import AccountNotice from './AccountNotice.vue';
 function skipToMain() {
   document.querySelector('#main-content')?.focus();
 }
@@ -10,6 +11,7 @@ function skipToMain() {
   >
   <AppHeader />
   <main id="main-content" class="container-fluid axon-container axon-main" tabindex="-1">
+    <AccountNotice />
     <slot />
   </main>
   <footer class="container-fluid axon-container axon-footer">

@@ -15,7 +15,8 @@ export async function requestJson(path, { method = 'GET', body, authenticated = 
   } catch (cause) {
     const status = cause.response?.status;
     // A late response from an old login must not clear a newer session.
-    if (status === 401 && token === session.value?.accessToken) clearSession();
+    if (status === 401 && authenticated && token && token === session.value?.accessToken)
+      clearSession('expired');
     const error = new Error(
       status ? `Request failed (${status}).` : 'Cannot reach the API. Try again.',
     );

@@ -1,6 +1,17 @@
 import { readonly, shallowRef } from 'vue';
 
 const key = 'axonhub-session';
+const notice = shallowRef(null);
+export const accountNotice = readonly(notice);
+const notices = {
+  login: { tone: 'success', message: 'You are now logged in.' },
+  registered: { tone: 'success', message: 'Your account is ready. You are now logged in.' },
+  logout: { tone: 'info', message: 'You have been logged out.' },
+  expired: { tone: 'error', message: 'Your session has expired. Log in again to continue.' },
+};
+export function dismissAccountNotice() {
+  notice.value = null;
+}
 export function safeSession(value) {
   const user = value?.user;
   if (
@@ -30,18 +41,20 @@ function readSession() {
 }
 const current = shallowRef(readSession());
 export const session = readonly(current);
-export function saveSession(value) {
+export function saveSession(value, reason) {
   const safe = safeSession(value);
   if (!safe) throw new Error('Invalid session response.');
   current.value = safe;
+  notice.value = notices[reason] || null;
   try {
     sessionStorage.setItem(key, JSON.stringify(safe));
   } catch {
     /* In-memory session. */
   }
 }
-export function clearSession() {
+export function clearSession(reason) {
   current.value = null;
+  notice.value = notices[reason] || null;
   try {
     sessionStorage.removeItem(key);
   } catch {

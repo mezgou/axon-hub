@@ -8,7 +8,7 @@ const { session, clearSession } = useSession();
 const { theme, toggleTheme } = useTheme();
 const router = useRouter();
 function logout() {
-  clearSession();
+  clearSession('logout');
   router.push('/login');
 }
 </script>
