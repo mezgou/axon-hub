@@ -460,3 +460,66 @@ a:hover {
 .axon-auth-form [role='alert']:not(:empty) {
   margin-block: 0;
 }
+
+.axon-notice-slot {
+  display: grid;
+  grid-template-rows: 1fr;
+}
+.axon-notice-clip {
+  min-height: 0;
+  overflow: hidden;
+}
+.axon-account-notice--timed {
+  --axon-notice-fill: var(--axon-subtle);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 64px;
+  background: color-mix(in srgb, var(--axon-notice-fill) 35%, transparent);
+}
+.axon-account-notice--timed.axon-account-notice--success {
+  --axon-notice-fill: var(--axon-success-bg);
+}
+.axon-account-notice--timed::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--axon-notice-fill);
+  transform-origin: left center;
+  animation: axon-notice-drain 3s linear forwards;
+}
+.axon-notice-countdown {
+  flex-shrink: 0;
+  min-width: 2ch;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.75;
+}
+.axon-notice-enter-active,
+.axon-notice-leave-active {
+  transition:
+    grid-template-rows 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+.axon-notice-enter-from,
+.axon-notice-leave-to {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transform: translateY(-6px);
+}
+@keyframes axon-notice-drain {
+  to {
+    transform: scaleX(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .axon-account-notice--timed::before {
+    animation: none;
+  }
+  .axon-notice-enter-active,
+  .axon-notice-leave-active {
+    transition: none;
+  }
+}

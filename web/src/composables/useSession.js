@@ -45,7 +45,7 @@ export function saveSession(value, reason) {
   const safe = safeSession(value);
   if (!safe) throw new Error('Invalid session response.');
   current.value = safe;
-  notice.value = notices[reason] || null;
+  notice.value = notices[reason] ? { ...notices[reason] } : null;
   try {
     sessionStorage.setItem(key, JSON.stringify(safe));
   } catch {
@@ -54,7 +54,7 @@ export function saveSession(value, reason) {
 }
 export function clearSession(reason) {
   current.value = null;
-  notice.value = notices[reason] || null;
+  notice.value = notices[reason] ? { ...notices[reason] } : null;
   try {
     sessionStorage.removeItem(key);
   } catch {

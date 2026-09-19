@@ -29,6 +29,7 @@ afterEach(() => {
   wrappers.splice(0).forEach((wrapper) => wrapper.unmount());
   clearSession();
   vi.resetAllMocks();
+  vi.useRealTimers();
 });
 it('shows inline required errors, focuses the first field and never submits invalid data', async () => {
   const { wrapper } = render(AuthForm, { props: { registration: true } });
@@ -69,7 +70,8 @@ it.each([
     expect(wrapper.get('button').element.disabled).toBe(false);
   },
 );
-it('announces logout in the shared layout and dismisses with a safe focus target', async () => {
+it('announces logout and auto-dismisses after three seconds without stealing focus', async () => {
+  vi.useFakeTimers();
   saveSession({
     accessToken: 'test',
     user: { id: 1, displayName: 'Demo', email: 'demo@example.test' },
@@ -85,7 +87,13 @@ it('announces logout in the shared layout and dismisses with a safe focus target
     'You have been logged out.',
   );
   expect(wrapper.find('.axon-account-notice [role="alert"]').exists()).toBe(false);
-  await wrapper.get('[aria-label="Dismiss account notification"]').trigger('click');
+  expect(wrapper.get('.axon-notice-countdown').text()).toBe('3s');
+  wrapper.get('h1').element.focus();
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(wrapper.get('.axon-notice-countdown').text()).toBe('2s');
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(wrapper.get('.axon-notice-countdown').text()).toBe('1s');
+  await vi.advanceTimersByTimeAsync(1000);
   expect(wrapper.find('.axon-account-notice').exists()).toBe(false);
   expect(document.activeElement).toBe(wrapper.get('h1').element);
 });
@@ -102,4 +110,31 @@ it('replaces an expired-session notice after a successful login', async () => {
   await flushPromises();
   expect(accountNotice.value).toMatchObject({ tone: 'success', message: 'You are now logged in.' });
   expect(wrapper.get('#password').element.value).toBe('');
+});
+
+it('keeps errors visible and cancels the previous success timer', async () => {
+  vi.useFakeTimers();
+  clearSession('logout');
+  const { wrapper } = render(PageLayout, { slots: { default: '<h1 tabindex="-1">Log in</h1>' } });
+  await vi.advanceTimersByTimeAsync(2000);
+  clearSession('expired');
+  await vi.advanceTimersByTimeAsync(10000);
+  expect(wrapper.get('[role="alert"]').text()).toContain('session has expired');
+  expect(wrapper.find('.axon-notice-countdown').exists()).toBe(false);
+  await wrapper.get('[aria-label="Dismiss account notification"]').trigger('click');
+  expect(accountNotice.value).toBeNull();
+  expect(document.activeElement).toBe(wrapper.get('h1').element);
+});
+it('restarts the countdown for a repeated notice and clears timers on unmount', async () => {
+  vi.useFakeTimers();
+  clearSession('logout');
+  const { wrapper } = render(PageLayout);
+  await vi.advanceTimersByTimeAsync(2000);
+  clearSession('logout');
+  await vi.advanceTimersByTimeAsync(1000);
+  expect(wrapper.get('.axon-notice-countdown').text()).toBe('2s');
+  wrapper.unmount();
+  wrappers.splice(wrappers.indexOf(wrapper), 1);
+  await vi.advanceTimersByTimeAsync(5000);
+  expect(accountNotice.value.message).toBe('You have been logged out.');
 });
