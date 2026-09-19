@@ -31,7 +31,7 @@ function matchesResource(resource, values) {
 function createResourceRow(resource) {
   const row = template.content.firstElementChild.cloneNode(true);
   const isDataset = resource.type === 'dataset';
-  row.querySelector('img').src = `assets/icons/${isDataset ? 'database' : 'box'}.svg`;
+  row.querySelector('.axon-resource-tile use').setAttribute('href', `assets/icons.svg#${isDataset ? 'database' : 'box'}`);
   row.querySelector('.axon-resource-tile').classList.toggle('axon-resource-tile--dataset', isDataset);
   const badge = row.querySelector('.axon-resource-type');
   badge.textContent = isDataset ? 'Dataset' : 'Model';

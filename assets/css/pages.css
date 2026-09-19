@@ -236,7 +236,7 @@
   color: var(--axon-muted);
 }
 
-.axon-auth-intro > img {
+.axon-auth-intro > svg {
   display: block;
   width: 200px;
   height: 160px;

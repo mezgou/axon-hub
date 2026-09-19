@@ -1,8 +1,9 @@
 Bootstrap Icons v1.13.1
 https://github.com/twbs/icons/tree/v1.13.1
 
-Applies to the Bootstrap SVG icons in this directory.
-axon-mark.svg and resource-network.svg are original AxonHub artwork,
+Applies to the Bootstrap icon symbols in ../icons.svg.
+The axon-mark and resource-network symbols, and axon-mark.svg (favicon),
+are original AxonHub artwork,
 covered by the repository LICENSE.
 
 The MIT License (MIT)

@@ -77,7 +77,7 @@ main.axon-container {
   text-decoration: none;
 }
 
-.axon-brand img {
+.axon-brand > svg {
   display: block;
 }
 
@@ -161,6 +161,7 @@ main.axon-container {
   height: 18px;
   flex-shrink: 0;
   vertical-align: -.15em;
+  fill: currentColor;
 }
 
 .axon-icon-label {
@@ -196,9 +197,6 @@ main.axon-container {
   --bs-btn-focus-shadow-rgb: var(--axon-focus-rgb);
 }
 
-.btn-primary .axon-icon {
-  filter: brightness(0) invert(1);
-}
 
 .btn-outline-primary, .btn-outline-secondary {
   --bs-btn-color: var(--axon-button-text);
@@ -288,7 +286,7 @@ summary {
   .axon-brand {
     font-size: 1.15rem;
   }
-  .axon-brand img {
+  .axon-brand > svg {
     width: 28px;
     height: 28px;
   }
@@ -346,14 +344,7 @@ summary {
 }
 .form-control::placeholder { color: var(--axon-muted); opacity: 1; }
 .form-control:disabled, .form-select:disabled { background-color: var(--axon-subtle); }
-.axon-icon { filter: var(--axon-icon-filter); }
-.btn-primary .axon-icon { filter: var(--axon-primary-icon-filter); }
-#star-resource .axon-toggle-on {
-  filter: none;
-  background: var(--axon-star);
-  mask: url('../icons/star-fill.svg') center / contain no-repeat;
-  object-position: -9999px;
-}
+#star-resource .axon-toggle-on { color: var(--axon-star); }
 .axon-theme-controls {
   display: flex;
   align-items: center;

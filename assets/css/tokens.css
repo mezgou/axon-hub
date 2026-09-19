@@ -43,8 +43,6 @@
   --axon-avatar-text: #27533b;
   --axon-on-accent: #fff;
   --axon-focus-rgb: 36, 122, 96;
-  --axon-icon-filter: none;
-  --axon-primary-icon-filter: brightness(0) invert(1);
   --axon-star: #a87500;
 }
 
@@ -93,8 +91,6 @@
   --axon-avatar-text: #dfe6ee;
   --axon-on-accent: #14231d;
   --axon-focus-rgb: 169, 217, 196;
-  --axon-icon-filter: brightness(0) saturate(100%) invert(85%);
-  --axon-primary-icon-filter: brightness(0);
   --axon-star: #e8bf69;
 }
 
@@ -144,8 +140,6 @@
   --axon-avatar-text: #dfe6ee;
   --axon-on-accent: #14231d;
   --axon-focus-rgb: 169, 217, 196;
-  --axon-icon-filter: brightness(0) saturate(100%) invert(85%);
-  --axon-primary-icon-filter: brightness(0);
   --axon-star: #e8bf69;
   }
 }
