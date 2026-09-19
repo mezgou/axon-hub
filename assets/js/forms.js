@@ -5,6 +5,7 @@ const form = document.querySelector('.axon-auth-form');
 const submit = form.querySelector('button[type="submit"]');
 const fields = [...form.querySelectorAll('input')];
 const status = document.querySelector('#form-status');
+const summary = document.querySelector('#error-summary');
 const isRegistering = form.id === 'register-form';
 const requiredMessages = {
   displayName: 'Enter your display name.',
@@ -20,10 +21,16 @@ function showError(field, message) {
   else field.removeAttribute('aria-invalid');
 }
 
+function updateSummary() {
+  const count = fields.filter(field => field.getAttribute('aria-invalid') === 'true').length;
+  summary.textContent = count > 1 ? `Check the ${count} highlighted fields. Each field has an explanation below it.` : '';
+}
+
 form.addEventListener('submit', async event => {
   event.preventDefault();
   if (submit.disabled) return;
   status.textContent = '';
+  status.classList.remove('axon-form-failure');
   let firstInvalid = null;
 
   for (const field of fields) {
@@ -44,12 +51,14 @@ form.addEventListener('submit', async event => {
     if (message && !firstInvalid) firstInvalid = field;
   }
 
+  updateSummary();
   if (firstInvalid) {
     firstInvalid.focus();
     return;
   }
 
   submit.disabled = true;
+  fields.forEach(field => { field.readOnly = true; });
   status.textContent = isRegistering ? 'Creating your account...' : 'Signing in...';
   let accountCreated = false;
   try {
@@ -60,8 +69,10 @@ form.addEventListener('submit', async event => {
       : await login(email, password);
     accountCreated = isRegistering;
     saveSession(session);
+    form.elements.password.value = '';
     location.assign(isRegistering ? 'profile.html' : getReturnPath(new URLSearchParams(location.search).get('returnTo')));
   } catch (error) {
+    status.classList.add('axon-form-failure');
     if (isRegistering) {
       if (error.status === 409) {
         showError(form.elements.email, 'This email is already registered. Log in or use another email.');
@@ -76,7 +87,7 @@ form.addEventListener('submit', async event => {
       ? 'Email or password is incorrect.'
       : 'Could not sign in. Check the local API and browser session storage, then try again.';
   } finally {
-    form.elements.password.value = '';
+    fields.forEach(field => { field.readOnly = false; });
     submit.disabled = false;
   }
 });
@@ -84,7 +95,9 @@ form.addEventListener('submit', async event => {
 for (const field of fields) {
   field.addEventListener('input', () => {
     showError(field, '');
+    updateSummary();
     status.textContent = '';
+    status.classList.remove('axon-form-failure');
   });
 }
 

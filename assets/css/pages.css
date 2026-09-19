@@ -281,6 +281,16 @@
   display: none;
 }
 
+.axon-auth-form .axon-form-failure {
+  color: #b42318;
+  background: #fff1f0;
+  border-inline-start: 3px solid currentColor;
+}
+
+.axon-auth-form #error-summary:empty {
+  display: none;
+}
+
 .axon-auth > p {
   margin: 0;
   text-align: center;
