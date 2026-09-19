@@ -59,7 +59,13 @@ function applyFilters() {
   if (loadState !== 'ready') return;
   const visible = resources.filter(resource => matchesResource(resource, values));
   list.replaceChildren(...visible.map(createResourceRow));
-  resultCount.textContent = `${visible.length} ${visible.length === 1 ? 'resource' : 'resources'}`;
+  const activeFilters = filterNames.filter(name => values[name]).map(name => {
+    const control = form.elements.namedItem(name);
+    return `${name}: ${control.selectedOptions[0].textContent}`;
+  });
+  const context = [values.q.trim() ? `search: ${values.q.trim()}` : '', ...activeFilters].filter(Boolean);
+  resultCount.textContent = `${visible.length} ${visible.length === 1 ? 'resource' : 'resources'}${context.length
+    ? ` matching ${context.join('; ')}` : ' available'}.`;
   emptyResults.hidden = visible.length !== 0;
   emptyResults.textContent = resources.length
     ? 'No resources match your filters. Try another search or Reset.'
@@ -84,7 +90,7 @@ async function loadResources() {
     if (restoreFocus) resultCount.focus();
   } catch {
     loadState = 'error';
-    resultCount.textContent = 'Resources unavailable';
+    resultCount.textContent = 'Resources could not be loaded. Use Retry to try again.';
     loadError.hidden = false;
     retry.hidden = false;
   } finally {

@@ -25,6 +25,7 @@ forkButton.addEventListener('click', async () => {
     return;
   }
   forkButton.disabled = true;
+  forkButton.setAttribute('aria-busy', 'true');
   forkStatus.textContent = 'Opening your metadata copy…';
   try {
     const fork = await forkResource(loadedResource, session.user);
@@ -36,7 +37,10 @@ forkButton.addEventListener('click', async () => {
       forkLogin.href = `login.html?returnTo=${encodeURIComponent(`${pageType}.html?id=${id}#fork-heading`)}`;
       forkLogin.hidden = false;
     }
-  } finally { forkButton.disabled = false; }
+  } finally {
+    forkButton.disabled = false;
+    forkButton.setAttribute('aria-busy', 'false');
+  }
 });
 
 async function renderFork(resource) {
@@ -79,7 +83,7 @@ async function loadStars() {
   try {
     stars = await getStars(id);
     renderStars();
-    starStatus.textContent = '';
+    starStatus.textContent = `${new Set(stars.map(star => star.userId)).size} stars loaded.`;
     starRetry.hidden = true;
     starButton.disabled = false;
     if (restoreFocus) starButton.focus();
@@ -104,6 +108,7 @@ starButton.addEventListener('click', async () => {
   }
   const remove = starButton.getAttribute('aria-pressed') === 'true';
   starButton.disabled = true;
+  starButton.setAttribute('aria-busy', 'true');
   starStatus.textContent = 'Saving star…';
   try {
     // Re-read before mutation so a retry does not repeat an uncertain POST.
@@ -114,7 +119,7 @@ starButton.addEventListener('click', async () => {
     } else if (!own.length) await addStar(id, session.user.id);
     stars = await getStars(id);
     renderStars();
-    starStatus.textContent = remove ? 'Star removed.' : 'Star saved.';
+    starStatus.textContent = `${remove ? 'Star removed.' : 'Star saved.'} ${new Set(stars.map(star => star.userId)).size} stars total.`;
   } catch (error) {
     starStatus.textContent = error.status === 401 ? 'Your session expired. Log in to continue.'
       : 'Could not confirm the change. Reload stars before trying again.';
@@ -122,6 +127,7 @@ starButton.addEventListener('click', async () => {
     renderStars();
     return;
   } finally {
+    starButton.setAttribute('aria-busy', 'false');
     starButton.disabled = !starRetry.hidden;
   }
 });
@@ -146,7 +152,9 @@ async function loadSubscription() {
   try {
     subscriptions = await getSubscriptions('resourceId', id);
     renderSubscription();
-    subscriptionStatus.textContent = '';
+    subscriptionStatus.textContent = getSession()
+      ? subscriptionButton.getAttribute('aria-pressed') === 'true' ? 'You are subscribed.' : 'You are not subscribed.'
+      : 'Log in to subscribe to this resource.';
     subscriptionRetry.hidden = true;
     subscriptionButton.disabled = false;
     if (restoreFocus) subscriptionButton.focus();
@@ -168,6 +176,7 @@ subscriptionButton.addEventListener('click', async () => {
   }
   const remove = subscriptionButton.getAttribute('aria-pressed') === 'true';
   subscriptionButton.disabled = true;
+  subscriptionButton.setAttribute('aria-busy', 'true');
   subscriptionStatus.textContent = 'Saving subscription…';
   try {
     await setSubscription(id, session.user.id, !remove);
@@ -181,6 +190,7 @@ subscriptionButton.addEventListener('click', async () => {
     renderSubscription();
     return;
   } finally {
+    subscriptionButton.setAttribute('aria-busy', 'false');
     subscriptionButton.disabled = !subscriptionRetry.hidden;
   }
 });

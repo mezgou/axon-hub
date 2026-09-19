@@ -29,6 +29,13 @@ export function initDiscussion(resourceId) {
     }
     const edit = button('Edit');
     const remove = button('Delete');
+    // Distinguish repeated controls using the visible comment, including after edits.
+    function updateControlNames() {
+      const context = `your comment: ${comment.body.slice(0, 80)}`;
+      edit.setAttribute('aria-label', `Edit ${context}`);
+      remove.setAttribute('aria-label', `Delete ${context}`);
+    }
+    updateControlNames();
     controls.append(edit, remove);
     row.append(controls);
 
@@ -97,6 +104,7 @@ export function initDiscussion(resourceId) {
           } else {
             comment.body = body;
             row.querySelector('[data-body]').textContent = body;
+            updateControlNames();
             postStatus.textContent = 'Comment updated.';
             edit.focus();
           }
